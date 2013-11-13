@@ -1,4 +1,4 @@
-5341020815bc67da1365317659ff801d *DESCRIPTION
+4a8da31b8907ea4ad60082521a5f3489 *DESCRIPTION
 d7b44c0afa20158dcd3f14f7f2186e4c *NAMESPACE
 0cf1f2721406ae874dc221ea069b17dc *R/ZZZ_whopgenome.R
 2bec69cce5e5ec056cc85349c0787a5d *R/bgzf.R
@@ -130,6 +130,8 @@ a4670f0c09e4cb3bb8afa3a26ac33ce4 *man/whop.ucsc.geneInfoSimilar.Rd
 f712de0d5395ee1a41955d138b9eba68 *man/whop.ucsc.genesForRegion.Rd
 763c5d01da15e579863deac75e194db9 *man/whop.ucsc.query.Rd
 ab35f3e0dfdc8d53e806dbbc6f20e9f1 *src/Makevars
+c58ec0f60283be5db37f2399e1e0420a *src/Makevars.win
+e2053958a8c2ce7545c49d7e2cb70fc7 *src/dummy.cc
 73baebef6d6ffc576fd8be184c579943 *src/dynstorage.h
 165e481f623640f03c2606a0672a4b52 *src/faidx_ifc.cpp
 a639c287965972efcccc309c0608bbd2 *src/functor_common.h
@@ -140,13 +142,13 @@ a639c287965972efcccc309c0608bbd2 *src/functor_common.h
 c0399a4ac9046ecdd73ec0558f4c475d *src/readdnapp.cpp
 3933f133f9b23f42c7306c9c65e4ec64 *src/t_Rifc.cpp
 f7df927da90b81b30235980cc27b5a2d *src/t_info.cpp
-d21a6e8331dc4a74c0dc5dc188b0f802 *src/t_main.cpp
+aa1d478685b7f3b05d634eccc6a44c75 *src/t_main.cpp
 ccf98b99f45fee85448faf0d18c4b144 *src/t_read.cpp
 0a6444fc691b108ca7e97c4ec5678529 *src/t_region.cpp
 aba13a3883d7d117af33a6d8fe8c1ed1 *src/tabix/bam_endian.h
 a9f135cf6c369a13d43510eaff9c983b *src/tabix/bedidx.c
-6f0fe24983ff2ccca4a47dd613f7f60a *src/tabix/bgzf.c
-b852891557f8a6122767146864052ac2 *src/tabix/bgzf.h
+3b43b88a72f657c7e243891f5f15c4fd *src/tabix/bgzf.c
+cf2e061f68bff1f6d9f78df813333a28 *src/tabix/bgzf.h
 448dc1b0a98166d6b6e7cf7ec5a8d626 *src/tabix/faidx.c
 439b311de50e95d286bca25693f27433 *src/tabix/faidx.h
 ebb10ce44fe49a7a02dffdf2e2b47a6e *src/tabix/index.c
@@ -170,7 +172,7 @@ c16ce7cc56e08911b147eb7ce2951c19 *src/w_region.cpp
 6bd61dd2b2a5b2e469fb81291224e128 *src/w_rsupport.cpp
 2365a68e7c953f3cbe8f76cdaa325de2 *src/w_rsupport.h
 6f25c258ef7578067cf0971196156cc5 *src/w_samples.cpp
-e88d04de8cff977a0f9dd0986e87e002 *src/w_snpmat_fnc.cpp
+263c32ff99bb9cece1e76e1f72c85ed7 *src/w_snpmat_fnc.cpp
 7668294f66604ae9b3fe1fabd3b4a1d5 *src/w_tabix.h
 a27e776949a024a37a1fcdce453dcaa3 *src/w_tabix_internal.h
 2d3282dbe1a7f4cf1bd7bf5e60701328 *src/w_tools.cpp

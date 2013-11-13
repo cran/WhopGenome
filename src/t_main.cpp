@@ -441,7 +441,7 @@ EXPORT  SEXP BGZF_compress( SEXP in_filename_sexp, SEXP out_filename_sexp )
 	//	determine filesize
 	//
 	fseek( infh, 0, SEEK_END );
-	uint64_t fsize = ftello64(infh);
+	off_t fsize = ftello(infh);
 	df2("(II) bgzf_compress : Input file is %ld bytes long\n",fsize);
 	fseek( infh, 0, SEEK_SET );
 	
@@ -450,8 +450,8 @@ EXPORT  SEXP BGZF_compress( SEXP in_filename_sexp, SEXP out_filename_sexp )
 	//
 	bool		failed=false;
 	char		buffer[ 4096 ];
-	uint64_t	curpos=0,
-				times_nothing=0;		//count how many repeated calls to bgzf_write did not write any data
+	off_t		curpos=0;
+	uint64_t	times_nothing=0;		//count how many repeated calls to bgzf_write did not write any data
 				
 	//	how many calls are allowed to produce no compression? - 20*4096 = 80KB
 #define		MAX_NONCOMPRESSING_BGZF_WRITE_CALLS		20
@@ -463,7 +463,7 @@ EXPORT  SEXP BGZF_compress( SEXP in_filename_sexp, SEXP out_filename_sexp )
 		//	read from input file
 		//
 		uint64_t rdb = fread( buffer, 1, 4096, infh );
-		if( 0 == rdb )
+		if( 0 >= rdb )
 		{
 			//df2("READ %d bytes, curpos now %d -- breaking loop \n",rdb,curpos);
 			break;
@@ -473,7 +473,7 @@ EXPORT  SEXP BGZF_compress( SEXP in_filename_sexp, SEXP out_filename_sexp )
 		//	write and compress into output file
 		//
 		int r = bgzf_write( outfh, buffer, rdb );
-		if( 0 == r )
+		if( 0 >= r )
 		{
 			times_nothing ++;	// detect if bgzf_write does not write any compressed data anymore
 		}

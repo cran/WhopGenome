@@ -88,7 +88,7 @@ EXPORT SEXP helper_read_intmatrix_functored( SEXP vcfptr, MatrixLoaderBaseClass 
 	if( 0 == f )
 	{
 		Rprintf("helper_read_intmatrix_functored :: Parameter not a VCFhandle EXTPTR!\n");
-		RBool::False();//return R_NilValue;
+		RBool::False();
 	}
 	fn.vcf = f;
 	
@@ -99,7 +99,7 @@ EXPORT SEXP helper_read_intmatrix_functored( SEXP vcfptr, MatrixLoaderBaseClass 
 	if( f->num_wanted_samples < 1 )
 	{
 		Rprintf("helper_read_intmatrix_functored :: No samples selected!\n");
-		RBool::False();//return R_NilValue;
+		RBool::False();
 	}
 	
 	df2("B\n");
@@ -110,7 +110,7 @@ EXPORT SEXP helper_read_intmatrix_functored( SEXP vcfptr, MatrixLoaderBaseClass 
 	if( samplefieldindex <= FORMAT )
 	{
 		Rprintf("helper_read_intmatrix_functored :: VCF does not have a FORMAT field!\n");
-		RBool::False();//return R_NilValue;
+		RBool::False();
 	}
 	
 	df2("C\n");
@@ -121,7 +121,7 @@ EXPORT SEXP helper_read_intmatrix_functored( SEXP vcfptr, MatrixLoaderBaseClass 
 	if( false == m.isValid() )
 	{
 		Rprintf("helper_read_intmatrix_functored :: Second parameter is not an integer matrix!\n");
-		RBool::False();//return R_NilValue;
+		RBool::False();
 	}
 	
 	df2("D\n");
@@ -144,7 +144,7 @@ EXPORT SEXP helper_read_intmatrix_functored( SEXP vcfptr, MatrixLoaderBaseClass 
 	if( f->num_wanted_samples > (unsigned)nrow )
 	{
 		Rprintf("helper_read_intmatrix_functored :: %d samples selected but matrix offers only rows for %d samples!\n",f->num_wanted_samples,nrow);
-		return R_NilValue;
+		return  RBool::False();
 	}
 	
 	//
@@ -161,7 +161,7 @@ EXPORT SEXP helper_read_intmatrix_functored( SEXP vcfptr, MatrixLoaderBaseClass 
 	if( ptr == 0 )
 	{
 		Rprintf("helper_read_intmatrix_functored :: ERROR : Could not get access to the matrix in form of an int*!\n");
-		return false;
+		return  RBool::False();
 	}
 	
 	//
@@ -421,7 +421,7 @@ EXPORT SEXP helper_read_strmatrix_functored( SEXP vcfptr, MatrixLoaderBaseClass 
 	if( ptr == 0 )
 	{
 		Rprintf("helper_read_strmatrix_functored :: ERROR : Could not get access to the matrix in form of an SEXP!\n");
-		return false;
+		return  RBool::False();
 	}
 	
 	//
@@ -1009,8 +1009,8 @@ EXPORT SEXP read_snp_diplo_bial_int_nuclcodes( SEXP vcfptr, SEXP mat )
 
 	//			Rprintf("left=%d, right=%d\n",left_allele,right_allele);
 			*ptr = 
-						( nucleotide_mapping[ ((0==left_allele)?*refptr:*altptr) ] * 10 )
-					+	nucleotide_mapping[ ((0==right_allele)?*refptr:*altptr) ];
+						( nucleotide_mapping[ int((0==left_allele)?*refptr:*altptr)&0xFF ] * 10 )
+					+	nucleotide_mapping[ int((0==right_allele)?*refptr:*altptr)&0xFF ];
 
 			//
 			//
@@ -1117,15 +1117,14 @@ EXPORT SEXP read_snp_diplo_bial_str_nuclcodes( SEXP vcfptr, SEXP mat )
 				/*: separates genotype from other per-sample data*/
 			if( fcopy[3] != '\t' && fcopy[3] != 0 && fcopy[3] != ':' )
 			{
-				//Rprintf(
 				snprintf( errormessage, sizeof(errormessage)/sizeof(errormessage[0]), "Syntax error in GT field (%s)!\n",samplePtr);
 				return false;
 			}
 
-	//			Rprintf("left=%d, right=%d\n",left_allele,right_allele);
+	//		Rprintf("left=%d, right=%d\n",left_allele,right_allele);
 			char	all[3];
-			all[0] = nucleotide_mapping[ (left_allele?*refptr:*altptr) ] + '0';
-			all[1] = nucleotide_mapping[ (right_allele?*refptr:*altptr) ] + '0';
+			all[0] = nucleotide_mapping[ int(left_allele?*refptr:*altptr)&0xFF ] + '0';
+			all[1] = nucleotide_mapping[ int(right_allele?*refptr:*altptr)&0xFF ] + '0';
 			all[2] = 0;
 			
 			*ptr = mkChar( (const char*)&all );	//TODO optimise this : use 5x5 matrix with once-initialised mkChar() entries: "11","12", "13",... / "21","22","23... ...
