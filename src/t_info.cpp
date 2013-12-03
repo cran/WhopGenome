@@ -149,7 +149,7 @@ bool			whop_tabix::parseHeader( ParseFunctor &f )
 */
 const char*	whop_tabix::getHeaderLine( unsigned int index )
 {
-	if( index >= header_lines.size() || index < 0 )
+	if( index >= header_lines.size() )
 		return 0;
 	return header_lines[ index ].c_str();
 }

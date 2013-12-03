@@ -174,16 +174,23 @@ bool	filterLine( vcff* f );
 EXPORT	SEXP	WhopDebugLevel( void );
 EXPORT	SEXP	SetWhopDebugLevel( SEXP lev );
 
+	//	- debug log functions
+	//
 		void	df0( const char *fmt, ...);
-#ifndef DEBUG
-#	define		df1		//
-#	define		df2		//
+#if DEBUG
+#	define		df1		_df1
+#	define		df2		_df2
+		void	_df1( const char *fmt, ...);
+		void	_df2( const char *fmt, ...);
 #else
-		void	df1( const char *fmt, ...);
-		void	df2( const char *fmt, ...);
+#	define		df1(...)	
+#	define		df2(...)	
 #endif
+
+		//
 		void	df(int level, const char *fmt, ...);
-		
+
+		//
 		int		strcmp_cis( const char *a, const char *b );
 
 //		bool	_internal_isSNP( const char * refptr, const char* altptr );

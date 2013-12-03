@@ -406,7 +406,9 @@ SEXP	processAlignmentMAF( void )
 				
 				//	get sequence index
 				//
-				if( (ni=rownames.hasname( seqnamebuf )) >= 0 && ni < numsamples )
+				int rownameidx = rownames.hasname( seqnamebuf );
+				ni = rownameidx;
+				if( (rownameidx >= 0) && (ni < numsamples) )
 				{
 					ONDBG Rprintf("	Sequence name '%s' is sequence #%d\n",seqnamebuf,ni);
 					//TODO: mark sequence ni as contributing in this alignment block

@@ -158,7 +158,7 @@ void	df0( const char *fmt, ...)
 
 /*!
 */
-void	df1( const char *fmt, ...)
+void	_df1( const char *fmt, ...)
 {
 	if( debug_level < 1 )
 		return;
@@ -175,7 +175,7 @@ void	df1( const char *fmt, ...)
 
 /*!
 */
-void	df2( const char *fmt, ...)
+void	_df2( const char *fmt, ...)
 {
 	if( debug_level < 2 )
 		return;

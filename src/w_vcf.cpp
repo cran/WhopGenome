@@ -295,7 +295,7 @@ bool			vcff::open( const char * filename )
 					
 					//	make sure the required fields are documented
 					//
-					if( ( i <= 8 ) && ( i >= 0 ) )
+					if( i <= 8)
 					{
 						// CHROM must be field 0
 						if( (i == 0) && ( strcmp(tokenbuf,"CHROM")!= 0 ) )

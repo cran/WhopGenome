@@ -131,7 +131,7 @@ EXPORT SEXP helper_read_intmatrix_functored( SEXP vcfptr, MatrixLoaderBaseClass 
 	//
 	if( m.getType() != INTSXP )
 	{
-		df0("helper_read_intmatrix_functored :: Parameter not a string matrix!\n");
+		df0("helper_read_intmatrix_functored :: Parameter not a integer matrix!\n");
 		return RBool::False();
 	}
 	
@@ -173,8 +173,8 @@ EXPORT SEXP helper_read_intmatrix_functored( SEXP vcfptr, MatrixLoaderBaseClass 
 	int				snppos=-1;
 	
 	SEXP colnamvec = m.getColNames();
-//	if( R_NilValue == colnamvec )
-//		Rprintf("helper_read_intmatrix_functored :: WARNING : matrix has no column names vector! not setting SNP positions in matrix!\n");
+	if( R_NilValue == colnamvec )
+		Rprintf("helper_read_intmatrix_functored :: WARNING : matrix has no column names vector! not setting SNP positions in matrix!\n");
 
 	//
 	//
@@ -284,6 +284,7 @@ EXPORT SEXP helper_read_intmatrix_functored( SEXP vcfptr, MatrixLoaderBaseClass 
 		if( true==fn.bHadAlt && true==fn.bHadRef )
 		{
 			
+			//	fill unused matrix elements in current column
 			//
 			for( ; per_row < nrow ; per_row ++ )
 			{

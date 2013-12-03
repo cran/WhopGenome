@@ -46,11 +46,11 @@ vcf_getSample <- function( vcffh, stridx )	.Call("VCF_getSample",vcffh,stridx,PA
 #
 #
 #
-VCF_read_snp_diplo_bial_int_altpresence <- function( vcffh, mat ) .Call("", vcffh, mat, PACKAGE="WhopGenome" )
-VCF_read_snp_diplo_bial_str_allelechars <- function( vcffh, mat ) .Call("", vcffh, mat, PACKAGE="WhopGenome" )
-VCF_read_snp_diplo_bial_str_01 <- function( vcffh, mat ) .Call("", vcffh, mat, PACKAGE="WhopGenome" )
-VCF_read_snp_diplo_bial_int_nuclcodes <- function( vcffh, mat ) .Call("", vcffh, mat, PACKAGE="WhopGenome" )
-VCF_read_snp_diplo_bial_str_nuclcodes <- function( vcffh, mat ) .Call("", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_read_snp_diplo_bial_int_altpresence <- function( vcffh, mat ) .Call("read_snp_diplo_bial_int_altpresence", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_read_snp_diplo_bial_str_allelechars <- function( vcffh, mat ) .Call("read_snp_diplo_bial_str_allelechars", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_read_snp_diplo_bial_str_01 <- function( vcffh, mat ) .Call("read_snp_diplo_bial_str_01", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_read_snp_diplo_bial_int_nuclcodes <- function( vcffh, mat ) .Call("read_snp_diplo_bial_int_nuclcodes", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_read_snp_diplo_bial_str_nuclcodes <- function( vcffh, mat ) .Call("read_snp_diplo_bial_str_nuclcodes", vcffh, mat, PACKAGE="WhopGenome" )
 
 
 
