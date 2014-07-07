@@ -199,7 +199,7 @@ bool			vcff::open( const char * filename )
 	//
 	if( whop_tabix::open( filename ) == false )
 	{
-		Rprintf("vcff::open : could not open tabix-index!\n");
+		Rprintf("(!!) vcff::open : could not open tabix-index!\n");
 		return false;
 	}
 	
@@ -208,7 +208,7 @@ bool			vcff::open( const char * filename )
 	const char * hdrline0 = getHeaderLine(0);
 	if( (hdrline0 == 0) || (strncmp( hdrline0 ,"##fileformat=VCFv",17)!= 0) )
 	{
-		Rprintf("vcff::open : Not a VCF, missing VCF header : [%s]!\n",getHeaderLine(0));
+		Rprintf("(!!) vcff::open : Not a VCF, missing VCF header : [%s]!\n",getHeaderLine(0));
 		return false;
 	}
 	
@@ -242,7 +242,7 @@ bool			vcff::open( const char * filename )
 	//
 	if( version_major < 3 || version_major > 4 )
 	{
-		Rprintf("vcff::open : VCF versions < 3 and > 4 are not supported!\n",getHeaderLine(0));
+		Rprintf("(!!) VCF versions < 3 and > 4 are not supported!\n",getHeaderLine(0));
 		return false;
 	}
 	if( version_major == 3 )
@@ -359,11 +359,11 @@ bool			vcff::open( const char * filename )
 				field_offsets[0] = 0;
 				field_offsets_size = num_fields;
 				if( field_offsets == 0 )
-					throw "vcff::open : failed to allocate buffer to memorize field offsets!";
+					throw "(!!) vcff::open : failed to allocate buffer to memorize field offsets!";
 			}
 			else
 			{
-				Rprintf("whopgen::vcff::open : unexpected # of fields in TSV (%d<=0)!\n",num_fields);
+				Rprintf("(WW) vcff::open : unexpected # of fields in TSV (%d<=0)!\n",num_fields);
 				field_offsets=0;
 			}
 			
@@ -372,16 +372,16 @@ bool			vcff::open( const char * filename )
 			//		use num_fields instead of num_samples to allocate a large enough buffer
 			wanted_samples = (unsigned int*)malloc( sizeof( unsigned int ) * num_fields );
 			if( wanted_samples == 0 )
-				throw "vcff::open : failed to allocate buffer for sample-selection!";
+				throw "(!!) vcff::open : failed to allocate buffer for sample-selection!";
 			
 			//
-			Rprintf("vcff::open : file opened, contains %d samples\n",num_samples);
+			Rprintf("(II) VCF File contains %d samples\n",num_samples);
 			
 			//
 		}//...if parseheader( vspn )
 		else
 		{
-			Rprintf("vcff::open : could not find format-defining header line!\n");
+			Rprintf("(!!) vcff::open : could not find format-defining header line!\n");
 			return false;
 		}
 

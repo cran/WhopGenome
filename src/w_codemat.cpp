@@ -520,17 +520,6 @@ EXPORT	SEXP	VCF_readBialMultilineCodeMatrix( SEXP vcfptr, SEXP mat )
 
 
 
-
-
-
-
-
-
-
-
-#define	DBG(s)	Rprintf(#s);
-
-
 /*!	
 **
 **

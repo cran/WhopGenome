@@ -546,8 +546,8 @@ bool		snpmat_run_loop_str_diploidonly( snpmat_read_info_str& inf )
 			//
 			if( !(is_GT_allele_divider(fieldptr[1])) || !(is_FORMAT_subfield_delimiter(fieldptr[3])) )
 			{
-				RPRINT_WARN( "Non-diploid data! (%s)\n" , fieldptr );
-				RPRINT_VCFLINE;
+				DBG_RPRINT_WARN( "Non-diploid data! (%s)\n" , fieldptr );
+				DBG_RPRINT_VCFLINE;
 				continue;
 			}
 
@@ -965,8 +965,8 @@ bool		snpmat_run_loop_str_diploidonly_nofilter( snpmat_read_info_str& inf )
 			//
 			if( !(is_GT_allele_divider(fieldptr[1])) || !(is_FORMAT_subfield_delimiter(fieldptr[3])) )
 			{
-				RPRINT_WARN( "Non-diploid data! (%s)\n" , fieldptr );
-				RPRINT_VCFLINE;
+				DBG_RPRINT_WARN( "Non-diploid data! (%s)\n" , fieldptr );
+				DBG_RPRINT_VCFLINE;
 				continue;
 			}
 
@@ -1077,16 +1077,24 @@ SEXP _internal_VCF_snpmat_str( snpmat_read_info_str& inf, SEXP vcfptr, SEXP mat 
 	if( inf.doFiltering )
 	{
 		if( inf.diploid_samples_only )
+		{
 			runresult = snpmat_run_loop_str_diploidonly( inf );
+		}
 		else
+		{
 			runresult = snpmat_run_loop_str( inf );
+		}
 	}
 	else
 	{
 		if( inf.diploid_samples_only )
+		{
 			runresult = snpmat_run_loop_str_diploidonly_nofilter( inf );
+		}
 		else
+		{
 			runresult = snpmat_run_loop_str_nofilter( inf );
+		}
 	}
 
 	//

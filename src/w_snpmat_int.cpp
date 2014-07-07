@@ -105,6 +105,7 @@ inline	bool	ALT_is_snp( const char * ptr )
 */
 bool			snpmat_init_validate_int( snpmat_read_info_int &inf, SEXP vcfptr, SEXP mat )
 {
+//	DBG( "[%s]\n" , __FUNCTION_NAME__ );
 
 	inf.f = (vcff*)R_GetExtPtr( vcfptr , "VCFhandle" );
 	if( 0 == inf.f )
@@ -219,6 +220,7 @@ bool			snpmat_init_validate_int( snpmat_read_info_int &inf, SEXP vcfptr, SEXP ma
 */
 bool		snpmat_run_loop_int( snpmat_read_info_int& inf )
 {
+//	DBG( "[%s]\n" , __FUNCTION_NAME__ );
 
 	//
 	char			*fieldptr=0;	
@@ -429,7 +431,7 @@ bool		snpmat_run_loop_int( snpmat_read_info_int& inf )
 */
 bool		snpmat_run_loop_int_diploidonly( snpmat_read_info_int& inf )
 {
-	//printf("I_DIP_FILT\n");
+//	DBG( "[%s]\n" , __FUNCTION_NAME__ );
 
 	//
 	char			*fieldptr=0;	
@@ -547,8 +549,8 @@ bool		snpmat_run_loop_int_diploidonly( snpmat_read_info_int& inf )
 			//
 			if( !(is_GT_allele_divider(fieldptr[1])) || !(is_FORMAT_subfield_delimiter(fieldptr[3])) )
 			{
-				RPRINT_WARN( "Non-diploid data! (%s)\n" , fieldptr );
-				RPRINT_VCFLINE;
+				DBG_RPRINT_WARN( "Non-diploid data! (%s)\n" , fieldptr );
+				DBG_RPRINT_VCFLINE;
 				break;//continue;
 			}
 
@@ -664,6 +666,7 @@ bool		snpmat_run_loop_int_diploidonly( snpmat_read_info_int& inf )
 */
 bool		snpmat_run_loop_int_nofilter( snpmat_read_info_int& inf )
 {
+//	DBG( "[%s]\n" , __FUNCTION_NAME__ );
 
 	//
 	char			*fieldptr=0;	
@@ -684,14 +687,20 @@ bool		snpmat_run_loop_int_nofilter( snpmat_read_info_int& inf )
 		bool	bLineParsed;
 		while( true == (bLineParsed = inf.f->parseNextLine()) )
 		{
+		
+//			DBG("%d:%d [%s]\n",inf.cur_col,inf.ncol,inf.f->getFieldPtr( CHROM ));
 			
 			refptr = (char*)inf.f->getFieldPtr( REF );
 			altptr = (char*)inf.f->getFieldPtr( ALT );
+
+//			DBG("refptr %p altptr %p\n",refptr,altptr);
+//			DBG("ref[%s]\n",refptr);
 
 			//	- make sure its a bi-allelic SNP line
 			//
 			if( refptr && refptr[1] == '\t' )			//TODO use macro/inline
 			{
+//				DBG("ref_SNP\n");
 				if( inf.biallelic_locus_required )
 				{
 					if( altptr && altptr[1] == '\t' )	//both REF and ALT have only single-char alleles?
@@ -707,6 +716,10 @@ bool		snpmat_run_loop_int_nofilter( snpmat_read_info_int& inf )
 						break;	// ..yes, process this line
 				}
 			}///...if REF is single-char allele
+			else
+			{
+//				DBG("not SNP ref (%d=%c)\n",refptr?refptr[1]:-1,refptr?refptr[1]:'?');
+			}
 
 		}///...while( could read another line from VCF )
 
@@ -718,6 +731,7 @@ bool		snpmat_run_loop_int_nofilter( snpmat_read_info_int& inf )
 		if( bLineParsed == false )
 		{
 			//df1("No more lines!\n");
+//			DBG("nomorelines\n");
 			break;
 		}
 
@@ -734,6 +748,7 @@ bool		snpmat_run_loop_int_nofilter( snpmat_read_info_int& inf )
 			return false;
 		}
 		inf.snppos = atoi( fieldptr );
+//		DBG("snppos=%d\n",inf.snppos);
 
 		//-
 		//
@@ -865,6 +880,7 @@ bool		snpmat_run_loop_int_nofilter( snpmat_read_info_int& inf )
 */
 bool		snpmat_run_loop_int_diploidonly_nofilter( snpmat_read_info_int& inf )
 {
+//	DBG( "[%s]\n" , __FUNCTION_NAME__ );
 
 	//
 	char			*fieldptr=0;	
@@ -968,8 +984,8 @@ bool		snpmat_run_loop_int_diploidonly_nofilter( snpmat_read_info_int& inf )
 			//
 			if( !(is_GT_allele_divider(fieldptr[1])) || !(is_FORMAT_subfield_delimiter(fieldptr[3])) )
 			{
-				RPRINT_WARN( "Non-diploid data! (%s)\n" , fieldptr );
-				RPRINT_VCFLINE;
+				DBG_RPRINT_WARN( "Non-diploid data! (%s)\n" , fieldptr );
+				DBG_RPRINT_VCFLINE;
 				continue;
 			}
 
@@ -1066,6 +1082,7 @@ bool		snpmat_run_loop_int_diploidonly_nofilter( snpmat_read_info_int& inf )
 */
 SEXP _internal_VCF_snpmat_int( snpmat_read_info_int& inf, SEXP vcfptr, SEXP mat )
 {
+//	DBG( "[%s]\n" , __FUNCTION_NAME__ );
 	//	initialise matrix read
 	//
 	if( false == snpmat_init_validate_int( inf , vcfptr, mat ) )

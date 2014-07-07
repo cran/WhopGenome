@@ -66,6 +66,8 @@
 #	define		ONDBG			if( false )
 #endif
 
+#define			DBG				if( debug_level ) Rprintf
+
 	//
 	//
 #define		EXPORT				extern "C"
@@ -197,15 +199,20 @@ inline bool	_internal_isSNP( const char * refptr, const char* altptr )
 #define		RPRINT_ERROR		Rprintf("(!!) Error : %s : ", inf.caller_name ); Rprintf
 
 									
-#define		RPRINT_WARN			Rprintf("(!!) Error : %s : ", inf.caller_name ); Rprintf
+#define		RPRINT_WARN			Rprintf("(?!) Warning : %s : ", inf.caller_name ); Rprintf
+
 									
 #define		RPRINT_VCFLINE		Rprintf("Current VCF line:\n[%s]\n", inf.f->getFieldPtr( 0 ) );
 
+#define		DBG_RPRINT_WARN		if( debug_level ) Rprintf("(?!) Warning : %s : ", inf.caller_name ); if( debug_level )  Rprintf
+#define		DBG_RPRINT_VCFLINE	if( debug_level ) Rprintf("Current VCF line:\n[%s]\n", inf.f->getFieldPtr( 0 ) );
 
 
 //*
 //*			EXTERNS
 //*
+
+extern	int		debug_level;
 
 	//
 	//
@@ -224,8 +231,8 @@ EXPORT	SEXP	SetWhopDebugLevel( SEXP lev );
 #	define		df1		_df1
 #	define		df2		_df2
 #else
-		#define	df1		if( false ) _df1
-		#define	df2		if( false ) _df2
+#	define		df1		if( false ) _df1
+#	define		df2		if( false ) _df2
 #endif
 		void	_df1( const char *fmt, ...);
 		void	_df2( const char *fmt, ...);

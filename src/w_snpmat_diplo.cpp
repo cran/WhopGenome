@@ -416,7 +416,7 @@ public:
 	//! Write NULL into the matrix, if a sample genotype is homozygous reference, otherwise write a 1
 	virtual	int		process_sample( const char* gt )
 	{
-		ONDBG Rprintf("Parsing POS=%d [%s]\n",snppos,gt );
+	//	ONDBG Rprintf("Parsing POS=%d [%s]\n",snppos,gt );
 		int allelecode=-1,
 			allelenum,
 			res=0
@@ -451,7 +451,7 @@ public:
 
 				//
 				//
-				Rprintf("ishet: allelecode=%d allelenum=%d\n",allelecode,allelenum);
+			//	Rprintf("ishet: allelecode=%d allelenum=%d\n",allelecode,allelenum);
 				if( allelecode == -1 )
 				{
 					allelecode=allelenum;
@@ -505,16 +505,12 @@ public:
 		return (keep_column?1:0);
 	}///...end_line
 
-};///...class snpmat_read_hasalt
+};///...class snpmat_read_ishet
 
 
 //*
 //*			DATA
 //*
-
-
-//SEXP	minus1_char = mkChar("-1");//R_NilValue;
-//SEXP	minus2_char = mkChar("-2");//R_NilValue;
 
 
 //*

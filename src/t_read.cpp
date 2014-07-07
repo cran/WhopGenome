@@ -164,8 +164,10 @@ bool			whop_tabix::parseNextLine( void )
 		unsigned int	*fo = field_offsets;
 		for( int p = 0 ; p < current_line_len ; p++ )
 		{
+			//Rprintf("<p=%d:%d = %c/%d\n",p,current_line_len,current_line[p],current_line[p]);
 			if( current_line[p] == '\t' )
 			{
+				//Rprintf("	istab\n");
 				//
 				if( idxpos > field_offsets_size )
 				{
@@ -174,12 +176,15 @@ bool			whop_tabix::parseNextLine( void )
 				}
 			
 				//
-				*fo=strpos+1;
 				fo++;
+				*fo=p+1;
 				idxpos++;
 			}
 			else if(current_line[p] == 0 ) 
+			{
+				//Rprintf("	isNULL-strend!!!\n");
 				break;
+			}
 
 		}//..for all characters in the line
 #endif

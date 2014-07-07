@@ -23,12 +23,16 @@
 //*			DEFINES
 //*
 
+//#define	RELAXED_STANDARD
+
 	// any character that divides the chromosomes in a GT subfield ( a slash / for unphased, a bar | for phased, the obsolete backslash \ sign )
-#ifdef	RELAXED_STANDARD
+	//
+//#ifdef	RELAXED_STANDARD
+//#	define		is_GT_allele_divider( chr )		( ((chr) == '/') || ((chr) == '|') || ((chr) == '\\') )
+//#else
+//#	define		is_GT_allele_divider( chr )		( ((chr) == '/') || ((chr) == '|') )
 #	define		is_GT_allele_divider( chr )		( ((chr) == '/') || ((chr) == '|') || ((chr) == '\\') )
-#else
-#	define		is_GT_allele_divider( chr )		( ((chr) == '/') || ((chr) == '|') )
-#endif
+//#endif
 
 	//
 #define		is_column_divider( ch )			( (ch) == '\t' )

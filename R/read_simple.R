@@ -10,6 +10,7 @@
 #	returns a data-frame where the rownames are the field names of the VCF
 #
 vcf_readLineDF <- function( vcffh )	return(	data.frame( .Call("VCF_readLineTSV",vcffh,PACKAGE="WhopGenome"), row.names=.Call("VCF_getFieldNames",vcffh,PACKAGE="WhopGenome") )	)
+vcf_readLineDFFiltered <- function( vcffh )	return(	data.frame( .Call("VCF_readLineTSVFiltered",vcffh,PACKAGE="WhopGenome"), row.names=.Call("VCF_getFieldNames",vcffh,PACKAGE="WhopGenome") )	)
 
 
 #
