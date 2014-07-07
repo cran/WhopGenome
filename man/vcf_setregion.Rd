@@ -25,6 +25,16 @@ TRUE or FALSE , whether the call succeeded or not.
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	##
+	##	Example:
+	##
+	vcffile <- vcf_open( system.file( "extdata" , "ex.vcf.gz" , package="WhopGenome" ) )
+	
+	vcf_setregion(vcffile, "Y", 1, 100000 )
+	vcf_readLineVec( vcffile )
+}
 \seealso{
-vcf_open, vcf_getregion
+\code{\link{vcf_open}}
+\code{\link{vcf_getregion}}
 }

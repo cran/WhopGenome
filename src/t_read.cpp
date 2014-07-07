@@ -86,7 +86,7 @@ const char*	whop_tabix::readNextLine( void )
 
 
 /*!	Read next line from VCF and build an index-list into the string
-**		with the offsets of each field.
+**		with the offsets of each field (as start offsets into the raw tabix-line string).
 **
 **	- minimal preprocessing to quickly access a specific field in the line
 **	- First field is always at offset 0
@@ -137,9 +137,10 @@ bool			whop_tabix::parseNextLine( void )
 
 	//	find the starting indices of each field
 	//
-	field_offsets[0]=0;
+	field_offsets[0]=0;			// the first column (field nr. 0) always starts with the string ((column is named "CHROM" for VCF but here it is for general tabix files))
 	strpos = 0;
 	unsigned int	idxpos = 1;
+#if 0
 	for( int tmplen = current_line_len ; current_line[strpos] != 0 && tmplen > 0; strpos++, tmplen-- )
 	{
 		//
@@ -157,6 +158,31 @@ bool			whop_tabix::parseNextLine( void )
 			idxpos++;
 		}
 	}
+#else
+		//	find the starting indices of each field
+		//
+		unsigned int	*fo = field_offsets;
+		for( int p = 0 ; p < current_line_len ; p++ )
+		{
+			if( current_line[p] == '\t' )
+			{
+				//
+				if( idxpos > field_offsets_size )
+				{
+					Rprintf("(!!) whop_tabix::parseNextLine : ERROR : More fields in this line than expected! (%d>%d)\n",idxpos,last_num_fields);
+					return false;
+				}
+			
+				//
+				*fo=strpos+1;
+				fo++;
+				idxpos++;
+			}
+			else if(current_line[p] == 0 ) 
+				break;
+
+		}//..for all characters in the line
+#endif
 	
 	//
 	last_num_fields = numfields;
@@ -187,7 +213,7 @@ bool			whop_tabix::copyField( unsigned int fieldidx, char*buffer, unsigned int m
 	//
 	int fldoffs = field_offsets[ fieldidx ];
 	const char * str = &current_line[ fldoffs ];
-	int i=0;
+	unsigned int i=0;
 	for( ; i < (maxbuflen-1); i++ )
 	{
 		if( str[i] == '\t' || str[i] == 0 )

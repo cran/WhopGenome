@@ -27,6 +27,16 @@ An integer number is returned: the number of SNPs or biallelic SNPs.
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	##
+	##	Example:
+	##
+	vcffile <- system.file( "extdata" , "ex.vcf.gz" , package="WhopGenome" )
+	vcffile
+	vcffh <- vcf_open( vcffile )
+	vcffh
+	vcf_countSNPs( vcffh )
+}
 \seealso{
 vcf_restartregion
 }

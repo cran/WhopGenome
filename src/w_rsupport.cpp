@@ -1000,7 +1000,7 @@ int		RList::length( SEXP m )
 //***************************************************************
 //***************************************************************
 //***************************************************************
-
+#if 0
 /*
 **
 **
@@ -1010,6 +1010,22 @@ SEXP	createList( SEXP r )
 	SEXP res;
 	PROTECT( res = allocList( 5 ) );
 	return res;
+}
+
+/*! 
+**
+*/
+SEXP getvar(SEXP name, SEXP rho)
+{
+	SEXP ans;
+
+	if(!isString(name) || length(name) != 1)
+		error("name is not a single string");
+	if(!isEnvironment(rho))
+		error("rho should be an environment");
+	ans = findVar(install(CHAR(STRING_ELT(name, 0))), rho);
+	Rprintf("first value is %f\n", REAL(ans)[0]);
+	return(R_NilValue);
 }
 
 		
@@ -1044,24 +1060,9 @@ void setListElement(SEXP list, char *str, SEXP value)
       break;
     }
 }
-
-/*! 
-**
-*/
-SEXP getvar(SEXP name, SEXP rho)
- {
-	 SEXP ans;
- 
-	 if(!isString(name) || length(name) != 1)
-		 error("name is not a single string");
-	 if(!isEnvironment(rho))
-		 error("rho should be an environment");
-	 ans = findVar(install(CHAR(STRING_ELT(name, 0))), rho);
-	 Rprintf("first value is %f\n", REAL(ans)[0]);
-	 return(R_NilValue);
- }
   
 
+#endif
 
 
 

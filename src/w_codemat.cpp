@@ -12,7 +12,8 @@
 
 	TODO:
 
-
+		- improve speed : pre-determine allele->nucleotide.code conversion with array that is initialised
+							for every new SNP
 
 **
 */
@@ -71,12 +72,12 @@ SEXP	nucleotide_N	=	R_NilValue;	//for missing fields
 char	nucleotide_mapping[] = {
 	5,5,5,5,	5,5,5,5,	5,5,5,5,	5,5,5,5,				// 5	: - mostly nonprintable - 
 	5,5,5,5,	5,5,5,5,	5,5,5,5,	5,5,5,5,				// 16	: - mostly nonprintable - 
-	5,5,5,5,	5,5,5,5,	5,5,5,5,	5,6,5,5,				// 32	: !"#$%&'()*+’-./
+	5,5,5,5,	5,5,5,5,	5,5,5,5,	5,GAP,5,5,				// 32	: !"#$%&'()*+’-./
 	5,5,5,5,	5,5,5,5,	5,5,5,5,	5,5,5,5,				// 48	:5123456789:;<=>?
-	5,4,5,2,	5,5,5,3,	5,5,5,5,	5,5,5,5,				// 64	:@ABCDEFGHIJKLMNO
-	5,5,5,5,	1,1,5,5,	5,5,5,5,	5,5,5,5,				// 80	:PQRSTUVWXYZ[\]^_
-	5,4,5,2,	5,5,5,3,	5,5,5,5,	5,5,5,5,				// 96	:`abcdefghijklmno
-	5,5,5,5,	1,1,5,5,	5,5,5,5,	5,5,5,5,				// 112	:pqrstuvwxyz{|}~
+	5,NUC_A,5,NUC_C,	5,5,5,NUC_G,	5,5,5,5,	5,5,5,5,				// 64	:@ABCDEFGHIJKLMNO
+	5,5,5,5,	NUC_T,NUC_T,5,5,	5,5,5,5,	5,5,5,5,				// 80	:PQRSTUVWXYZ[\]^_
+	5,NUC_A,5,NUC_C,	5,5,5,NUC_G,	5,5,5,5,	5,5,5,5,				// 96	:`abcdefghijklmno
+	5,5,5,5,	NUC_T,NUC_T,5,5,	5,5,5,5,	5,5,5,5,				// 112	:pqrstuvwxyz{|}~
 
 	5,5,5,5,	5,5,5,5,	5,5,5,5,	5,5,5,5,				// 128	: - mostly nonprintable - 
 	5,5,5,5,	5,5,5,5,	5,5,5,5,	5,5,5,5,				// 144	: - mostly nonprintable - 
@@ -100,24 +101,19 @@ char	nucleotide_mapping[] = {
 //*
 
 
-/*
-
-
-bld(); v= .Call("VCF_open","/media/data715/ALL.chr1.phase1.projectConsensus.genotypes.vcf.gz"); .Call("VCF_selectSamples",v,c("HG00096","HG00098")); ndat = matrix(nrow=2,ncol=2,rep("A",4) )
-
-
-.Call("VCF_exportAsFasta",v,ndat,0,0,0)
-
-*/
 
 
 /*!	Reads a coding matrix for all biallelic SNPs of the given samples
 **
 **	- vcff : a VCFhandle
+**	- mat : a matrix large enough to contain all data, particularly, for N-ploid data, with (N * Num Selected Samples) rows!
 **
+**	CAVEAT  : there is no early detection if there are enough rows in the matrix
+**	CAVEAT2 : could return an error "not enough rows" even for SNPs which would not appear in the result matrix anyway
+**				 because the selected samples all feature the same allele and show no variation
 **
 */
-EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
+EXPORT	SEXP	VCF_readBialMultilineCodeMatrix( SEXP vcfptr, SEXP mat )
 {
 	// statistics
 	int	nonbialcols=0,
@@ -128,16 +124,7 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 	vcff * f = (vcff*)R_GetExtPtr( vcfptr , "VCFhandle" );
 	if( 0 == f )
 	{
-		Rprintf("VCF_readIntoCodeMatrix :: Parameter 1 is not a VCFhandle EXTPTR!\n");
-		return RBool::False();
-	}
-
-	//
-	//
-	unsigned int	samplefieldindex = f->getFirstSampleFieldIndex();
-	if( samplefieldindex <= FORMAT )
-	{
-		Rprintf("VCF_readIntoCodeMatrix :: VCF does not appear to have a FORMAT field!\n");
+		Rprintf("VCF_readBialMultilineCodeMatrix :: Parameter 1 is not a VCFhandle EXTPTR!\n");
 		return RBool::False();
 	}
 	
@@ -146,7 +133,7 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 	RMatrix m(mat);
 	if( false == m.isValid() )
 	{
-		Rprintf("VCF_readIntoCodeMatrix :: Parameter 2 not an integer matrix!\n");
+		Rprintf("VCF_readBialMultilineCodeMatrix :: Parameter 2 not an (integer) matrix!\n");
 		return RBool::False();
 	}
 	
@@ -155,7 +142,7 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 	//
 	if( m.getType() != INTSXP )
 	{
-		Rprintf("VCF_readIntoCodeMatrix :: Parameter 2 not an integer matrix!\n");
+		Rprintf("VCF_readBialMultilineCodeMatrix :: Parameter 2 not an _integer_ matrix!\n");
 		return RBool::False();
 	}
 	
@@ -163,7 +150,16 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 	//
 	if( f->num_wanted_samples < 1 )
 	{
-		Rprintf("VCF_readIntoCodeMatrix :: No samples selected!\n");
+		Rprintf("VCF_readBialMultilineCodeMatrix :: No samples selected!\n");
+		return RBool::False();
+	}
+
+	//
+	//
+	unsigned int	samplefieldindex = f->getFirstSampleFieldIndex();
+	if( samplefieldindex <= FORMAT )
+	{
+		Rprintf("VCF_readBialMultilineCodeMatrix :: VCF does not appear to have a FORMAT field!\n");
 		return RBool::False();
 	}
 
@@ -172,7 +168,9 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 	unsigned int	nrow = m.numRows();
 	if( f->num_wanted_samples > (unsigned)nrow )
 	{
-		Rprintf("VCF_readIntoCodeMatrix :: %d samples selected but matrix offers only rows for %d samples!\n",f->num_wanted_samples,nrow);
+		Rprintf("VCF_readBialMultilineCodeMatrix :: %d samples selected but matrix offers only %d rows!\n"
+				"\tNOTE : matrix should have (ploidy * number of selected samples) rows!\n"
+				,f->num_wanted_samples,nrow);
 		return RBool::False();
 	}
 
@@ -181,7 +179,7 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 	SEXP colnamvec = m.getColNames();
 	if( R_NilValue == colnamvec )
 	{
-		df1("WhopGenome::VCF_readIntoCodeMatrix : WARNING : matrix has no column names vector! Cannot set SNP positions in matrix!\n");
+		df1("VCF_readBialMultilineCodeMatrix : WARNING : matrix has no column names vector! Cannot name columns after SNP positions!\n");
 		//return RBool::False();
 	}
 
@@ -196,6 +194,8 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 	int*		 	ptr = m.getIntPtr();
 	
 	//
+	const char* refptr;
+	const char* altptr;
 	char			*fieldptr=0;
 	unsigned int	per_column = 0;		//vars here to find out what to clear
 	unsigned int	per_row = 0;		//	when too little data exists
@@ -204,6 +204,7 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 	
 	int				snppos=-1;//unused
 	SEXP			minus1_char = mkChar("-1");
+	char			nuccodes[2];
 	
 //	df1("ncol=%d, nrow=%d, wanted=%d\n",ncol,nrow,f->num_wanted_samples);
 
@@ -217,8 +218,6 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 		//
 		//-
 
-		const char* refptr;
-		const char* altptr;
 		bool	bLineParsed = f->parseNextLine();
 		//
 		while( bLineParsed )
@@ -252,6 +251,13 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 
 		}//while( could read another line from VCF )
 		
+		
+		//	prepare allele -> nucleotide code lookup
+		//		restricted to biallelic SNPs, so two are enough
+		//
+		nuccodes[0] = nucleotide_mapping[(unsigned)*refptr];
+		nuccodes[1] = nucleotide_mapping[(unsigned)*altptr];
+		
 		//	if could not read another line from VCT, exit with error
 		//
 		if( bLineParsed == false )
@@ -273,7 +279,7 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 			snppos = atoi( fieldptr );
 			if( snppos == 0 )
 			{
-				df1("VCF_readIntoCodeMatrix :: SNPpos=%d\n",snppos);
+				df1("VCF_readBialMultilineCodeMatrix :: SNPpos=%d\n",snppos);
 			}
 		}
 
@@ -285,12 +291,11 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 
 		//
 		//	- decompose FORMAT field
-		//		OPT: skip buffer-copying it
-		//		? what to do if missing ??
 		//	- find GT in FORMAT
-		//		! break with error if not found!
-		//	- memorise field-pos of GT
+		//		- if missing : break with error message and return FALSE
+		//	- memorise field-pos of GT (should always be first per definitionem)
 		//
+#if RELAXED_STANDARD
 		fieldptr = (char*)f->getFieldPtr( FORMAT );
 		int GTidx=0;
 		int i=0;
@@ -305,9 +310,10 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 		//
 		if( fieldptr[i]==0 || fieldptr[i]=='\t' )
 		{
-			df0("VCF_readIntoCodeMatrix :: NO GT FIELD DEFINED!\n");
+			df0("VCF_readBialMultilineCodeMatrix :: NO GT FIELD DEFINED!\n");
 			return RBool::False();
-		}
+		}	
+#endif
 
 		//--------------
 		//
@@ -329,64 +335,95 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 				bHadAlt = false;
 		
 		//
-		for( per_row = 0; per_row < f->num_wanted_samples ; per_row ++ )
+		unsigned int currow=0;
+		for( unsigned int per_sample = 0 ; per_sample < f->num_wanted_samples ; per_sample++ )
 		{
 			
 			//	- get field of sample
 			//
-			fieldptr = (char*)f->getFieldPtr( f->wanted_samples[per_row] );
+			fieldptr = (char*)f->getFieldPtr( f->wanted_samples[per_sample] );
 			
 			//
 			if( fieldptr == 0 )
 			{
-				Rprintf("VCF_readIntoCodeMatrix ::  Problem with reading sample's data!\n");
+				Rprintf("VCF_readBialMultilineCodeMatrix ::  Problem with reading sample's data!\n");
 				Rprintf("	debug info : per_row =%d\nwanted_sample[per_row]=%d\n",per_row, f->wanted_samples[per_row] );
 				Rprintf("	baseindex=%d, field = %d\n",samplefieldindex, (samplefieldindex + f->wanted_samples[per_row]) );
 				Rprintf("	numparsedfields=%d\n",f->numParsedFields());
 				return RBool::False();
 			}
 
+#if RELAXED_STANDARD
 			//	- find the GT subfield (skip ':' until found)
 			//
 			while( GTidx > 0 )
 			{
 				if( fieldptr[0] == ':' )
 					GTidx--;
+				else if( is_column_end( fieldptr[0] ) )
+				{
+					Rprintf("VCF_readBialMultilineCodeMatrix ::  Unexpected end of column while looking for GT subfield!\n");
+					Rprintf("Line:\n\t[%s]\n", f->getFieldPtr( 0 ) );
+					return RBool::False();
+				}
 				fieldptr++;
-			}
+			}			
+#endif
 			
+			//	read allelic composition of current sample
 			//
-			//	- parse the GT subfield ( regexp: [0-9]+[/|][0-9]+ )
+			//		assume data of arbitrary ploidy
 			//
-			int left_allele = fieldptr[0] - '0';
-			int right_allele = fieldptr[2] - '0';
-			//assert( left_allele >= 0 && left_allele <= 9 )
-			//assert( right_allele >= 0 && right_allele <= 9 )
-			
-			//
-			if( (fieldptr[1] != '|' && fieldptr[1] != '/') || (fieldptr[3] != '\t' && fieldptr[3] != ':') )
+			while( ! is_FORMAT_subfield_delimiter( fieldptr[0] ) )
 			{
-				df0("VCF_readIntoCodeMatrix :: Malformed GT field!\n");
-				return RBool::False();
-			}
+				
+				//	read one allele number of current sample
+				//
+				unsigned int allelenum = 0;
+				while( fieldptr[0] >= '0' && fieldptr[0] <= '9' )
+				{
+					allelenum = (10*allelenum) + ascii_digit_to_int( fieldptr[0] );
+					fieldptr++;
+				}//...while char is numeric
+				
+				//
+				//
+				if( is_GT_allele_divider( fieldptr[0] ) )
+				{
+					//	skip allele divider
+					//
+					fieldptr++;
+				}
+				else if( ! is_FORMAT_subfield_delimiter( fieldptr[0] ) )
+				{
+					Rprintf("(!!) Error at SNP position %d : VCF_readBialMultilineCodeMatrix :: unexpected char %c in GT field\n",snppos,fieldptr[0]);
+					Rprintf("Line:\n\t[%s]\n", f->getFieldPtr( 0 ) );
+					return RBool::False();
+				}
+				
+				//	turn allele number into nucleotide code
+				//
+				massert( allelenum < 2 );
+				if( currow >= nrow )
+				{
+					Rprintf("(!!) Error at SNP position %d : VCF_readBialMultilineCodeMatrix :: NO GT FIELD DEFINED!\n(%s)\n",snppos,(char*)f->getFieldPtr( CHROM ));
+					Rprintf("Line:\n\t[%s]\n", f->getFieldPtr( 0 ) );
+					return RBool::False();
+				}
+				
+				//
+				bHadRef = bHadRef || (allelenum==0);
+				bHadAlt = bHadAlt || (allelenum==1);
+				
+				//
+				ptr[currow++] = nuccodes[ allelenum ];
 
-			// any chromosome has alt allele -> result is alt allele
-			//
-			///char	actual_nucleotide;
-			if( ((left_allele==1)||(right_allele==1)) )
-			{
-				bHadAlt=true;
-				ptr[per_row] = nucleotide_mapping[(unsigned)*altptr];
-			}
-			else
-			{
-				bHadRef=true;
-				ptr[per_row] = nucleotide_mapping[(unsigned)*refptr];
-			}
+			}//...while not end of GT-subfield
 
-			//
-		}
-		
+
+		}//...for each sample
+
+
 		//
 		//	clear any unused matrix rows
 		//
@@ -394,9 +431,9 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 		{
 			
 			//
-			for( ; per_row < nrow ; per_row ++ )
+			for( ; currow < nrow ; currow ++ )
 			{
-				ptr[per_row] = -2;
+				ptr[currow] = -2;
 			}
 			
 			//
@@ -424,12 +461,15 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 		else
 		{			
 			//
+			Rprintf("DBG : non-bial pos %d\n",snppos);
 			per_column--;
 			nonbialcols++;
 		}
 
 	}//...for( each column in the matrix )
-	
+
+
+	//
 	//	Reset/clear unused columns
 	//
 	for( unsigned int rcol = per_column; rcol < ncol; rcol ++ )
@@ -451,13 +491,34 @@ EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat )
 	
 	//	print some statistics
 	//
-	df1("VCF_readIntoCodeMatrix ::\n\t%d nonbial columns\n",nonbialcols);
+	df1("VCF_readBialMultilineCodeMatrix ::\n\t%d nonbial columns\n",nonbialcols);
 	df1("\t%d bial columns\n",bialcols);
 	df1("\t%d total columns\n",bialcols+nonbialcols);
 	
 	//
 	return RBool::True();
-}//...
+
+}//...VCF_readBialMultilineCodeMatrix
+
+
+
+
+
+
+
+
+
+		//
+		//
+		//
+		//
+
+
+
+
+
+
+
 
 
 
@@ -639,7 +700,7 @@ EXPORT	SEXP	VCF_readIntoNucleotideMatrix( SEXP vcfptr, SEXP mat )
 		//NOTE: VCF actually requires the GT field to be the first, but this code allows deviations from the standard
 		//NOTE:		-> maybe just check for FORMAT =~ /^GT\:/  and get genotype from first sample field?
 		//-
-
+#if RELAXED_STANDARD
 		//
 		//	- decompose FORMAT field
 		//		OPT: skip buffer-copying it
@@ -665,7 +726,7 @@ EXPORT	SEXP	VCF_readIntoNucleotideMatrix( SEXP vcfptr, SEXP mat )
 			df0("WhopGenome::VCF_readIntoNucleotideMatrix : NO GT FIELD DEFINED!\n");
 			return RBool::False();
 		}
-
+#endif
 		//--------------
 		//
 		//	POSTCONDITIONS :
@@ -701,7 +762,7 @@ EXPORT	SEXP	VCF_readIntoNucleotideMatrix( SEXP vcfptr, SEXP mat )
 				Rprintf("		numparsedfields=%d\n",f->numParsedFields());
 				return RBool::False();
 			}
-
+#if RELAXED_STANDARD
 			//	- find the GT subfield (skip ':' until found)
 			//
 			while( GTidx > 0 )
@@ -710,7 +771,7 @@ EXPORT	SEXP	VCF_readIntoNucleotideMatrix( SEXP vcfptr, SEXP mat )
 					GTidx--;
 				fieldptr++;
 			}
-			
+#endif
 			//
 			//	- parse the GT subfield ( regexp: [0-9]+[/|][0-9]+ )
 			//
@@ -719,6 +780,8 @@ EXPORT	SEXP	VCF_readIntoNucleotideMatrix( SEXP vcfptr, SEXP mat )
 			//
 			int left_allele = fieldptr[0] - '0';
 			int right_allele = fieldptr[2] - '0';
+			
+			//TODO use macros !subfield_delimiter_FORMAT || !column_end
 			if( (fieldptr[1] != '|' && fieldptr[1] != '/') || (fieldptr[3] != '\t' && fieldptr[3] != ':') )
 			{
 				df0("WhopGenome::VCF_readIntoNucleotideMatrix : Malformed GT field!\n");
@@ -836,23 +899,6 @@ EXPORT	SEXP	VCF_readIntoNucleotideMatrix( SEXP vcfptr, SEXP mat )
 
 
 		//-----------------------------------------------------------------------------		Biallelic
-		
-		
-		
-		
-		
-		
-		
-		
-		
-//!
-inline bool isBiallelic( const char * _REF, const char* _ALT )
-{
-	if( _REF[1] != '\t' )	return false;
-	if( _ALT[1] != '\t' )	return false;
-	return true;
-}
-
 
 
 /*
@@ -866,7 +912,7 @@ w = ld("ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20110521/ALL.chr1.phase
 //-
 //-		parse VCF and fill biallelic matrix
 //-
-//-
+//-TODO integrate with VCF_getBial
 //-
 bool	read_bial( bool bFilterActivated, vcff * f, RMatrix &m )
 {
@@ -979,9 +1025,9 @@ bool	read_bial( bool bFilterActivated, vcff * f, RMatrix &m )
 
 		//	per VCF format definition, genotype field must always be first in sample columns !
 		//
+#if RELAXED_STANDARD
 		int GTidx=0;
 
-#ifdef	ALLOW_NONSTANDARD_VCF_GT
 		//-
 		//
 		//	Identify the GT-colon-field used in the per-individual fields
@@ -1032,7 +1078,7 @@ bool	read_bial( bool bFilterActivated, vcff * f, RMatrix &m )
 			df1("get_bial :: Line (pos %d)has been filtered away\n",snppos);
 			continue;
 		}
-		
+
 		//-
 		//
 		//	for each selected individual, get the SNP genotype information
@@ -1060,6 +1106,7 @@ bool	read_bial( bool bFilterActivated, vcff * f, RMatrix &m )
 
 			//	- find the GT subfield (skip ':' until found)
 			//
+#if RELAXED_STANDARD
 			while( GTidx > 0 )
 			{
 				if( fieldptr[0] == ':' )
@@ -1070,6 +1117,9 @@ bool	read_bial( bool bFilterActivated, vcff * f, RMatrix &m )
 			/*
 				- parse the GT subfield ( regexp: [0-9]+[/|][0-9]+ )
 			*/
+#endif
+
+			//TODO use inline "bool parse_two_alleles( &allele_ints[0] )"
 
 			//
 			//
@@ -1079,7 +1129,7 @@ bool	read_bial( bool bFilterActivated, vcff * f, RMatrix &m )
 			
 			//make sure there are at least two alleles, regardless of whether phased or unphased
 			//
-			if( fcopy[1] != '/' && fcopy[1] != '|' )
+			if( !(is_GT_allele_divider(fcopy[1])) )	//fcopy[1] != '/' && fcopy[1] != '|' )
 			{
 				Rprintf("ERROR : unexpected character '%c' in Genotype field at position %d\n",fcopy[1],snppos);
 				df0("	=> Syntax error in GT field (%s)!\n",fieldptr);

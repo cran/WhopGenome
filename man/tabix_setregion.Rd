@@ -21,6 +21,21 @@ Use .Call("tabix_setRegion", tabfh, tid, beginpos, endpos ) to eliminate the sli
 \value{
 Tabix file handle
 }
+%XXXXXXXXXXXXXXX
+\examples{
+
+##
+##	Example :
+##
+gffgzfile  <- system.file("extdata", "ex.gff3.gz", package = "WhopGenome" )
+gffh <- tabix_open( gffgzfile )
+gffh
+tabix_setregion( gffh, "ex.1", 1, 400 )
+tabix_close( gffh )
+gffh
+
+
+}
 \author{
 Ulrich Wittelsbuerger
 }

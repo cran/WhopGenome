@@ -20,6 +20,10 @@ header line of the VCF (e.g. CHROM, POS, ID, REF, ALT, ... ).
 \value{
 A data frame
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	d <- vcf_readLineDF( vcffile )
+}
 \author{
 Ulrich Wittelsbuerger
 }

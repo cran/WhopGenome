@@ -91,7 +91,7 @@ bool			whop_tabix::isValid( void )
 /*!
 **
 */
-const char*	whop_tabix::getSequenceName( unsigned int idx )
+const char*	whop_tabix::getSequenceName( unsigned long idx )
 {
 	if( idx >= num_seqnames )
 		return 0;

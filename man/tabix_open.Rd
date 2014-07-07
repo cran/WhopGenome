@@ -18,10 +18,23 @@ As filename, specify the data file, not the index file ending in .tbi!
 \value{
 Tabix file handle
 }
+%XXXXXXXXXXXXXXX
+\examples{
+
+##
+##	Example :
+##
+gffgzfile  <- system.file("extdata", "ex.gff3.gz", package = "WhopGenome" )
+gffh <- tabix_open( gffgzfile )
+gffh
+tabix_close( gffh )
+gffh
+
+}
 \author{
 Ulrich Wittelsbuerger
 }
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-tabix_close, tabix_read
+\code{\link{tabix_open}}
+\code{\link{tabix_read}}
 }

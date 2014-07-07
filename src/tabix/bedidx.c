@@ -67,7 +67,7 @@ int bed_overlap_core(const bed_reglist_t *p, int beg, int end)
 	int i, min_off;
 	if (p->n == 0) return 0;
 	min_off = (beg>>LIDX_SHIFT >= p->n)? p->idx[p->n-1] : p->idx[beg>>LIDX_SHIFT];
-	if (min_off < 0) { // TODO: this block can be improved, but speed should not matter too much here
+	if (min_off < 0) { /* TODO: this block can be improved, but speed should not matter too much here*/
 		int n = beg>>LIDX_SHIFT;
 		if (n > p->n) n = p->n;
 		for (i = n - 1; i >= 0; --i)
@@ -75,9 +75,9 @@ int bed_overlap_core(const bed_reglist_t *p, int beg, int end)
 		min_off = i >= 0? p->idx[i] : 0;
 	}
 	for (i = min_off; i < p->n; ++i) {
-		if ((int)(p->a[i]>>32) >= end) break; // out of range; no need to proceed
+		if ((int)(p->a[i]>>32) >= end) break; /* out of range; no need to proceed*/
 		if ((int32_t)p->a[i] > beg && (int32_t)(p->a[i]>>32) < end)
-			return 1; // find the overlap; return
+			return 1; /* find the overlap; return*/
 	}
 	return 0;
 }
@@ -99,33 +99,38 @@ void *bed_read(const char *fn)
 	kstream_t *ks;
 	int dret;
 	kstring_t *str;
-	// read the list
+	/* read the list*/
 	fp = strcmp(fn, "-")? gzopen(fn, "r") : gzdopen(fileno(stdin), "r");
-	if (fp == 0) return 0;
+	/*if (fp == 0) return 0;*/		/*@TODO : cppcheck : [dev/src/tabix/bedidx.c:104]: (error) Memory leak: h ||| kh_destroy call missing! */
+	if (fp == 0)
+	{
+		kh_destroy( reg , h );
+		return 0;
+	}
 	str = calloc(1, sizeof(kstring_t));
 	ks = ks_init(fp);
-	while (ks_getuntil(ks, 0, str, &dret) >= 0) { // read the chr name
+	while (ks_getuntil(ks, 0, str, &dret) >= 0) { /* read the chr name*/
 		int beg = -1, end = -1;
 		bed_reglist_t *p;
 		khint_t k = kh_get(reg, h, str->s);
-		if (k == kh_end(h)) { // absent from the hash table
+		if (k == kh_end(h)) { /* absent from the hash table*/
 			int ret;
 			char *s = strdup(str->s);
 			k = kh_put(reg, h, s, &ret);
 			memset(&kh_val(h, k), 0, sizeof(bed_reglist_t));
 		}
 		p = &kh_val(h, k);
-		if (dret != '\n') { // if the lines has other characters
+		if (dret != '\n') { /* if the lines has other characters*/
 			if (ks_getuntil(ks, 0, str, &dret) > 0 && isdigit(str->s[0])) {
-				beg = atoi(str->s); // begin
+				beg = atoi(str->s); /* begin*/
 				if (dret != '\n') {
 					if (ks_getuntil(ks, 0, str, &dret) > 0 && isdigit(str->s[0]))
-						end = atoi(str->s); // end
+						end = atoi(str->s); /* end*/
 				}
 			}
 		}
-		if (dret != '\n') while ((dret = ks_getc(ks)) > 0 && dret != '\n'); // skip the rest of the line
-		if (end < 0 && beg > 0) end = beg, beg = beg - 1; // if there is only one column
+		if (dret != '\n') while ((dret = ks_getc(ks)) > 0 && dret != '\n'); /* skip the rest of the line*/
+		if (end < 0 && beg > 0) end = beg, beg = beg - 1; /* if there is only one column*/
 		if (beg >= 0 && end > beg) {
 			if (p->n == p->m) {
 				p->m = p->m? p->m<<1 : 4;

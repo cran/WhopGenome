@@ -78,7 +78,7 @@ static int socket_wait(int fd, int is_read)
 	fd_set fds, *fdr = 0, *fdw = 0;
 	struct timeval tv;
 	int ret;
-	tv.tv_sec = 5; tv.tv_usec = 0; // 5 seconds time out
+	tv.tv_sec = 5; tv.tv_usec = 0; /* 5 seconds time out */
 	FD_ZERO(&fds);
 	FD_SET(fd, &fds);
 	if (is_read) fdr = &fds;
@@ -173,11 +173,11 @@ static SOCKET socket_connect(const char *host, const char *port)
 	struct linger lng = { 0, 0 };
 	struct sockaddr_in server;
 	struct hostent *hp = 0;
-	// open socket
+	/* open socket */
 	if ((fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == INVALID_SOCKET) __err_connect("socket");
 	if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char*)&on, sizeof(on)) == -1) __err_connect("setsockopt");
 	if (setsockopt(fd, SOL_SOCKET, SO_LINGER, (char*)&lng, sizeof(lng)) == -1) __err_connect("setsockopt");
-	// get host info
+	/* get host info */
 	if (isalpha(host[0])) hp = gethostbyname(host);
 	else {
 		struct in_addr addr;
@@ -185,12 +185,12 @@ static SOCKET socket_connect(const char *host, const char *port)
 		hp = gethostbyaddr((char*)&addr, 4, AF_INET);
 	}
 	if (hp == 0) __err_connect("gethost");
-	// connect
+	/* connect */
 	server.sin_addr.s_addr = *((unsigned long*)hp->h_addr);
 	server.sin_family= AF_INET;
 	server.sin_port = htons(atoi(port));
 	if (connect(fd, (struct sockaddr*)&server, sizeof(server)) != 0) __err_connect("connect");
-	// freehostent(hp); // strangely in MSDN, hp is NOT freed (memory leak?!)
+	/* freehostent(hp); */ /* strangely in MSDN, hp is NOT freed (memory leak?!) */
 	return fd;
 }
 #endif
@@ -201,8 +201,8 @@ static off_t my_netread(int fd, void *buf, off_t len)
 	/* recv() and read() may not read the required length of data with
 	 * one call. They have to be called repeatedly. */
 	while (rest) {
-		if (socket_wait(fd, 1) <= 0) break; // socket is not ready for reading
-		curr = netread(fd, (char*)(buf) + l, rest);	//@ubw: fixed void* ptr arithmetic
+		if (socket_wait(fd, 1) <= 0) break; /* socket is not ready for reading */
+		curr = netread(fd, (char*)(buf) + l, rest);	/* @ubw: fixed void* ptr arithmetic */
 		/* According to the glibc manual, section 13.2, a zero returned
 		 * value indicates end-of-file (EOF), which should mean that
 		 * read() will not return zero if EOF has not been met but data
@@ -227,8 +227,8 @@ static int kftp_get_response(knetFile *ftp)
 	int n = 0;
 	char *p;
 	if (socket_wait(ftp->ctrl_fd, 1) <= 0) return 0;
-	while (netread(ftp->ctrl_fd, &c, 1)) { // FIXME: this is *VERY BAD* for unbuffered I/O
-		//fputc(c, stderr);
+	while (netread(ftp->ctrl_fd, &c, 1)) { /* FIXME: this is *VERY BAD* for unbuffered I/O */
+		/*fputc(c, stderr); */
 		if (n >= ftp->max_response) {
 			ftp->max_response = ftp->max_response? ftp->max_response<<1 : 256;
 			ftp->response = realloc(ftp->response, ftp->max_response);
@@ -248,9 +248,12 @@ static int kftp_get_response(knetFile *ftp)
 
 static int kftp_send_cmd(knetFile *ftp, const char *cmd, int is_get)
 {
-	if (socket_wait(ftp->ctrl_fd, 0) <= 0) return -1; // socket is not ready for writing
-	ssize_t byteswritten = netwrite(ftp->ctrl_fd, cmd, strlen(cmd));
-	if( 0 >= byteswritten )			//@ubw fixed unused result warning
+	ssize_t byteswritten; /*  tabix/knetfile.c:252:2: warning: ISO C90 forbids mixed declarations and code [-Wpedantic] */
+
+	if (socket_wait(ftp->ctrl_fd, 0) <= 0)
+		return -1; /* socket is not ready for writing */
+	byteswritten = netwrite(ftp->ctrl_fd, cmd, strlen(cmd));
+	if( 0 >= byteswritten )			/* @ubw fixed unused result warning */
 	{
 		PRINT_ERROR( "[kftp_send_cmd] no (%d) bytes written!\n", byteswritten);
 		return -1;
@@ -309,7 +312,7 @@ int kftp_reconnect(knetFile *ftp)
 	return kftp_connect(ftp);
 }
 
-// initialize ->type, ->host, ->retr and ->size
+/* initialize ->type, ->host, ->retr and ->size */
 knetFile *kftp_parse_url(const char *fn, const char *mode)
 {
 	knetFile *fp;
@@ -335,7 +338,7 @@ knetFile *kftp_parse_url(const char *fn, const char *mode)
 	fp->seek_offset = 0;
 	return fp;
 }
-// place ->fd at offset off
+/* place ->fd at offset off */
 int kftp_connect_file(knetFile *fp)
 {
 	int ret;
@@ -394,7 +397,7 @@ knetFile *khttp_parse_url(const char *fn, const char *mode)
 	char *p, *proxy, *q;
 	int l;
 	if (strstr(fn, "http://") != fn) return 0;
-	// set ->http_host
+	/* set ->http_host */
 	for (p = (char*)fn + 7; *p && *p != '/'; ++p);
 	l = p - fn - 7;
 	fp = calloc(1, sizeof(knetFile));
@@ -403,11 +406,11 @@ knetFile *khttp_parse_url(const char *fn, const char *mode)
 	fp->http_host[l] = 0;
 	for (q = fp->http_host; *q && *q != ':'; ++q);
 	if (*q == ':') *q++ = 0;
-	// get http_proxy
+	/* get http_proxy */
 	proxy = getenv("http_proxy");
-	// set ->host, ->port and ->path
+	/* set ->host, ->port and ->path */
 	if (proxy == 0) {
-		fp->host = strdup(fp->http_host); // when there is no proxy, server name is identical to http_host name.
+		fp->host = strdup(fp->http_host); /* when there is no proxy, server name is identical to http_host name. */
 		fp->port = strdup(*q? q : "80");
 		fp->path = strdup(*p? p : "/");
 	} else {
@@ -427,32 +430,35 @@ int khttp_connect_file(knetFile *fp)
 {
 	int ret, l = 0;
 	char *buf, *p;
+	ssize_t byteswritten;
 	if (fp->fd != -1) netclose(fp->fd);
 	fp->fd = socket_connect(fp->host, fp->port);
-	buf = calloc(0x10000, 1); // FIXME: I am lazy... But in principle, 64KB should be large enough.
+	buf = calloc(0x10000, 1); /* FIXME: I am lazy... But in principle, 64KB should be large enough. */
 	l += sprintf(buf + l, "GET %s HTTP/1.0\r\nHost: %s\r\n", fp->path, fp->http_host);
     l += sprintf(buf + l, "Range: bytes=%" PRIu64 "-\r\n", fp->offset);
 	l += sprintf(buf + l, "\r\n");
-	ssize_t byteswritten = netwrite(fp->fd, buf, l);	//@ubw fixed unused result warning
-	if( 0 >= byteswritten )			//do sth with the result
+	byteswritten = netwrite(fp->fd, buf, l);	/* @ubw fixed unused result warning */
+	if( 0 >= byteswritten )			/* do sth with the result */
 	{
 		PRINT_ERROR( "[khttp_connect_file] no (%d) bytes written in GET request!\n", byteswritten);
+		/* return -1;  */ /* cppcheck : [dev/src/tabix/knetfile.c:440]: (error) Memory leak: buf ||| free(buf) the buf=calloc() from line 432 ! */
+		free( buf );
 		return -1;
 	}
 	l = 0;
-	while (netread(fp->fd, buf + l, 1)) { // read HTTP header; FIXME: bad efficiency
+	while (netread(fp->fd, buf + l, 1)) { /* read HTTP header; FIXME: bad efficiency */
 		if (buf[l] == '\n' && l >= 3)
 			if (strncmp(buf + l - 3, "\r\n\r\n", 4) == 0) break;
 		++l;
 	}
 	buf[l] = 0;
-	if (l < 14) { // prematured header
+	if (l < 14) { /* prematured header */
 		netclose(fp->fd);
 		fp->fd = -1;
 		return -1;
 	}
-	ret = strtol(buf + 8, &p, 0); // HTTP return code
-	if (ret == 200 && fp->offset>0) { // 200 (complete result); then skip beginning of the file
+	ret = strtol(buf + 8, &p, 0); /* HTTP return code */
+	if (ret == 200 && fp->offset>0) { /* 200 (complete result); then skip beginning of the file */
 		off_t rest = fp->offset;
 		while (rest) {
 			off_t l = rest < 0x10000? rest : 0x10000;
@@ -493,7 +499,7 @@ knetFile *knet_open(const char *fn, const char *mode)
 		fp = khttp_parse_url(fn, mode);
 		if (fp == 0) return 0;
 		khttp_connect_file(fp);
-	} else { // local file
+	} else { /* local file */
 #ifdef _WIN32
 		/* In windows, O_BINARY is necessary. In Linux/Mac, O_BINARY may
 		 * be undefined on some systems, although it is defined on my
@@ -539,10 +545,10 @@ off_t knet_read(knetFile *fp, void *buf, off_t len)
 		if (fp->is_ready == 0)
 			khttp_connect_file(fp);
 	}
-	if (fp->type == KNF_TYPE_LOCAL) { // on Windows, the following block is necessary; not on UNIX
+	if (fp->type == KNF_TYPE_LOCAL) { /* on Windows, the following block is necessary; not on UNIX */
 		off_t rest = len, curr;
 		while (rest) {
-			curr = read(fp->fd, (char*)(buf) + l, rest);	//@ubw: fixed void* ptr arithmetic
+			curr = read(fp->fd, (char*)(buf) + l, rest);	/* @ubw: fixed void* ptr arithmetic */
 			if (curr == 0) break;
 			l += curr; rest -= curr;
 		}
@@ -559,8 +565,8 @@ off_t knet_seek(knetFile *fp, int64_t off, int whence)
 		 * while fseek() returns zero on success. */
 		off_t offset = lseek(fp->fd, off, whence);
 		if (offset == -1) {
-            // Be silent, it is OK for knet_seek to fail when the file is streamed
-            // PRINT_ERROR("[knet_seek] %s\n", strerror(errno));
+            /* Be silent, it is OK for knet_seek to fail when the file is streamed */
+            /* PRINT_ERROR("[knet_seek] %s\n", strerror(errno)); */
 			return -1;
 		}
 		fp->offset = offset;
@@ -579,7 +585,7 @@ off_t knet_seek(knetFile *fp, int64_t off, int whence)
 	} 
     else if (fp->type == KNF_TYPE_HTTP) 
     {
-		if (whence == SEEK_END) { // FIXME: can we allow SEEK_END in future?
+		if (whence == SEEK_END) { /* FIXME: can we allow SEEK_END in future? */
 			PRINT_ERROR( "[knet_seek] SEEK_END is not supported for HTTP. Offset is unchanged.\n");
 			errno = ESPIPE;
 			return -1;
@@ -599,7 +605,7 @@ off_t knet_seek(knetFile *fp, int64_t off, int whence)
 int knet_close(knetFile *fp)
 {
 	if (fp == 0) return 0;
-	if (fp->ctrl_fd != -1) netclose(fp->ctrl_fd); // FTP specific
+	if (fp->ctrl_fd != -1) netclose(fp->ctrl_fd); /* FTP specific */
 	if (fp->fd != -1) {
 		/* On Linux/Mac, netclose() is an alias of close(), but on
 		 * Windows, it is an alias of closesocket(). */
@@ -607,8 +613,8 @@ int knet_close(knetFile *fp)
 		else netclose(fp->fd);
 	}
 	free(fp->host); free(fp->port);
-	free(fp->response); free(fp->retr); free(fp->size_cmd); // FTP specific
-	free(fp->path); free(fp->http_host); // HTTP specific
+	free(fp->response); free(fp->retr); free(fp->size_cmd); /* FTP specific */
+	free(fp->path); free(fp->http_host); /* HTTP specific */
 	free(fp);
 	return 0;
 }
@@ -626,7 +632,7 @@ int main(void)
 	if (type == 0) {
 		fp = knet_open("knetfile.c", "r");
 		knet_seek(fp, 1000, SEEK_SET);
-	} else if (type == 1) { // NCBI FTP, large file
+	} else if (type == 1) { /* NCBI FTP, large file */
 		fp = knet_open("ftp://ftp.ncbi.nih.gov/1000genomes/ftp/data/NA12878/alignment/NA12878.chrom6.SLX.SRP000032.2009_06.bam", "r");
 		knet_seek(fp, 2500000000ll, SEEK_SET);
 		l = knet_read(fp, buf, 255);
@@ -646,7 +652,7 @@ int main(void)
 	if (type != 4 && type != 1) {
 		knet_read(fp, buf, 255);
 		buf[255] = 0;
-		Rprintf("%s\n", buf);//@
+		Rprintf("%s\n", buf);/* @ */
 	} else write(fileno(stdout), buf, l);
 	knet_close(fp);
 	free(buf);

@@ -19,6 +19,6 @@ Table of rows from the pedigree
 Ulrich Wittelsbuerger
 }
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-whop.ped.females
+\code{\link{whop.ped.females}}
+\code{\link{bgzf_compress}}
 }

@@ -41,6 +41,7 @@ vcf_getQual <- function( vcffh )	.Call("VCF_getQual",vcffh,PACKAGE="WhopGenome")
 vcf_getFilter <- function( vcffh )	.Call("VCF_getFilter",vcffh,PACKAGE="WhopGenome")
 vcf_getInfo <- function( vcffh )	.Call("VCF_getInfo",vcffh,PACKAGE="WhopGenome")
 vcf_getInfoField <- function( vcffh, fieldnam )	.Call("VCF_getInfoField",vcffh,fieldnam,PACKAGE="WhopGenome")
+vcf_getFormat <- function( vcffh )	.Call("VCF_getFormat",vcffh,PACKAGE="WhopGenome")
 vcf_getSample <- function( vcffh, stridx )	.Call("VCF_getSample",vcffh,stridx,PACKAGE="WhopGenome")
 
 #
@@ -55,6 +56,49 @@ VCF_read_snp_diplo_bial_str_nuclcodes <- function( vcffh, mat ) .Call("read_snp_
 
 
 #
+#	R function does the same as the C function:
+#		call VCF_snpmat_diplo_bial_hasalt_filtered instead
 #
+VCF_read_snp_diplo_bial_int_altpresence <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_hasalt_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+
+
 #
+#	new, improved SNP-matrix read functions
+#
+VCF_snpmat_diplo_bial_geno_filtered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_geno_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_anyal_geno_filtered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_anyal_geno_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_bial_geno_unfiltered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_geno_unfiltered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_anyal_geno_unfiltered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_anyal_geno_unfiltered", vcffh, mat, PACKAGE="WhopGenome" )
+
+VCF_snpmat_diplo_bial_ishet_filtered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_ishet_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_anyal_ishet_filtered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_anyal_ishet_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_bial_ishet_unfiltered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_ishet_unfiltered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_anyal_ishet_unfiltered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_anyal_ishet_unfiltered", vcffh, mat, PACKAGE="WhopGenome" )
+
+VCF_snpmat_diplo_bial_hasalt_filtered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_hasalt_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_bial_hasalt_unfiltered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_hasalt_unfiltered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_anyal_hasalt_filtered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_anyal_hasalt_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_anyal_hasalt_unfiltered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_anyal_hasalt_unfiltered", vcffh, mat, PACKAGE="WhopGenome" )
+
+VCF_snpmat_diplo_bial_nucodes_filtered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_nucodes_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_bial_nucodes_unfiltered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_nucodes_unfiltered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_anyal_nucodes_filtered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_anyal_nucodes_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_diplo_anyal_nucodes_unfiltered <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_anyal_nucodes_unfiltered", vcffh, mat, PACKAGE="WhopGenome" )
+
+VCF_snpmat_anyplo_bial_nucodes_filtered <- function( vcffh, mat ) .Call("VCF_snpmat_anyplo_bial_nucodes_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_anyplo_bial_nucodes_unfiltered <- function( vcffh, mat ) .Call("VCF_snpmat_anyplo_bial_nucodes_unfiltered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_anyplo_anyal_nucodes_filtered <- function( vcffh, mat ) .Call("VCF_snpmat_anyplo_anyal_nucodes_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+VCF_snpmat_anyplo_anyal_nucodes_unfiltered <- function( vcffh, mat ) .Call("VCF_snpmat_anyplo_anyal_nucodes_unfiltered", vcffh, mat, PACKAGE="WhopGenome" )
+
+##	Obsolete functions / function names and their redirections
+##
+VCF_readIntoCodeMatrix <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_nucodes_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+read_snp_diplo_bial_int_altpresence <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_hasalt_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+read_snp_diplo_bial_int_nuclcodes <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_nucodes_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+read_snp_diplo_bial_str_allelechars <- function( vcffh, mat ) .Call("VCF_snpmat_diplo_bial_geno_filtered", vcffh, mat, PACKAGE="WhopGenome" )
+read_snp_diplo_bial_str_01 <- function( vcffh, mat )	stop("Not supported anymore: read_snp_diplo_bial_str_01 - use VCF_snpmat_diplo_bial_hasalt_(un)filtered instead")
+read_snp_diplo_bial_str_nuclcodes <- function( vcffh, mat )	stop("Not supported anymore: read_snp_diplo_bial_str_nuclcodes - use VCF_snpmat_diplo_bial_nucodes_(un)filtered instead")
+
+
+
 

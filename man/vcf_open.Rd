@@ -18,6 +18,9 @@ Use .Call("VCF_open", filename ) to eliminate the overhead of using the R wrappe
 \value{
 A VCF file handle, used in most VCF functions
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+}
 \author{
 Ulrich Wittelsbuerger
 }

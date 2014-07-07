@@ -23,6 +23,11 @@ None.
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	vcf_parseNextSNP( vcffile )
+	vcf_getPos( vcffile )
+}
 \seealso{
-vcf_isSNP, vcf_open
+vcf_isSNP, vcf_open, vcf_getPos
 }

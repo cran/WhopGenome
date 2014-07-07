@@ -19,6 +19,11 @@ Use .Call("VCF_getHeaderLine", vcff, whichnum ) to eliminate the overhead of usi
 \value{
 A string containing the full header line.
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	vcf_getheaderline( vcffile , as.integer(0) )
+	vcf_getheaderline( vcffile , as.integer(1) )
+}
 \author{
 Ulrich Wittelsbuerger
 }

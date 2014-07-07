@@ -21,6 +21,19 @@ None
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	##
+	##	Example:
+	##
+	vcffile <- system.file( "extdata" , "ex.vcf.gz" , package="WhopGenome" )
+	vcffile
+	vcffh <- vcf_open( vcffile )
+	vcffh
+	
+	##
+	##
+	vcf_close( vcffh )
+}
 \seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 vcf_open

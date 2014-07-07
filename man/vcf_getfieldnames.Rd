@@ -18,6 +18,10 @@ Use .Call("VCF_getFieldNames", vcff ) to eliminate the overhead of using the R w
 \value{
 A vector of strings representing the field names present in the VCF file.
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	vcf_getfieldnames( vcffile )
+}
 \author{
 Ulrich Wittelsbuerger
 }

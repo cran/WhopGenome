@@ -10,7 +10,7 @@ int ksprintf(kstring_t *s, const char *fmt, ...)
 	va_list ap;
 	int l;
 	va_start(ap, fmt);
-	l = vsnprintf(s->s + s->l, s->m - s->l, fmt, ap); // This line does not work with glibc 2.0. See `man snprintf'.
+	l = vsnprintf(s->s + s->l, s->m - s->l, fmt, ap); /* This line does not work with glibc 2.0. See `man snprintf'. */
 	va_end(ap);
 	if (l + 1 > s->m - s->l) {
 		s->m = s->l + l + 2;
@@ -24,7 +24,7 @@ int ksprintf(kstring_t *s, const char *fmt, ...)
 	return l;
 }
 
-// s MUST BE a null terminated string; l = strlen(s)
+/* s MUST BE a null terminated string; l = strlen(s) */
 int ksplit_core(char *s, int delimiter, int *_max, int **_offsets)
 {
 	int i, n, max, last_char, last_start, *offsets, l;
@@ -45,13 +45,13 @@ int ksplit_core(char *s, int delimiter, int *_max, int **_offsets)
 	for (i = 0, last_char = last_start = 0; i <= l; ++i) {
 		if (delimiter == 0) {
 			if (isspace(s[i]) || s[i] == 0) {
-				if (isgraph(last_char)) __ksplit_aux; // the end of a field
+				if (isgraph(last_char)) __ksplit_aux; /* the end of a field */
 			} else {
 				if (isspace(last_char) || last_char == 0) last_start = i;
 			}
 		} else {
 			if (s[i] == delimiter || s[i] == 0) {
-				if (last_char != 0 && last_char != delimiter) __ksplit_aux; // the end of a field
+				if (last_char != 0 && last_char != delimiter) __ksplit_aux; /* the end of a field */
 			} else {
 				if (last_char == delimiter || last_char == 0) last_start = i;
 			}
@@ -66,18 +66,18 @@ int ksplit_core(char *s, int delimiter, int *_max, int **_offsets)
  * Boyer-Moore search *
  **********************/
 
-// reference: http://www-igm.univ-mlv.fr/~lecroq/string/node14.html
+/* reference: http://www-igm.univ-mlv.fr/~lecroq/string/node14.html */
 int *ksBM_prep(const uint8_t *pat, int m)
 {
 	int i, *suff, *prep, *bmGs, *bmBc;
 	prep = calloc(m + 256, 1);
 	bmGs = prep; bmBc = prep + m;
-	{ // preBmBc()
+	{ /* preBmBc() */
 		for (i = 0; i < 256; ++i) bmBc[i] = m;
 		for (i = 0; i < m - 1; ++i) bmBc[pat[i]] = m - i - 1;
 	}
 	suff = calloc(m, sizeof(int));
-	{ // suffixes()
+	{ /* suffixes() */
 		int f = 0, g;
 		suff[m - 1] = m;
 		g = m - 1;
@@ -92,7 +92,7 @@ int *ksBM_prep(const uint8_t *pat, int m)
 			}
 		}
 	}
-	{ // preBmGs()
+	{ /* preBmGs() */
 		int j = 0;
 		for (i = 0; i < m; ++i) bmGs[i] = m;
 		for (i = m - 1; i >= 0; --i)

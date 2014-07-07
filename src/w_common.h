@@ -50,6 +50,8 @@
 //*			DEFINES
 //*
 
+	// support some variations in VCF file format, e.g. GT being not first field, and "\" as genotype separator char besides "/" and "|" etc.
+//#define			RELAXED_STANDARD		1
 
 #define			Rboolean_TRUE	((Rboolean)1)
 
@@ -75,25 +77,57 @@
 #define		unguards			}catch(const char*err){Rprintf("EXCEPTION CAUGHT:'%s' in file %s line %d\n",err,__FILE__,__LINE__);}catch(...){Rprintf("UNKNOWN EXCEPTION CAUGHT in file %s line %d\n",__FILE__,__LINE__);}
 
 
+	//Nucleotide codes
+	//		TCGAN-
+	//
+#define		NUC_T				1	/*also U*/
+#define		NUC_C				2
+#define		NUC_G				3
+#define		NUC_A				4
+#define		NUC_N				5
+#define		GAP					6
 
+#define		TAB					'\t'
+#define		COMMA				','
+#define		DOT					'.'
+#define		COLON				':'
+#define		SEMICOLON			';'
+#define		SLASH				'/'
+#define		BACKSLASH			'\\'
+#define		BAR					'|'
 
+	//
+	//
 #define		CHKSTR( nam, len )				CHKTYPE( nam, String, len )
 #define		CHKTYPE( nam, type, len )		( is##type(nam) && (length(nam) == 1) )
+
+
+#ifndef __FUNCTION_NAME__
+    #ifdef WIN32   //WINDOWS
+        #define __FUNCTION_NAME__   __FUNCTION__  
+    #else          //*NIX
+        #define __FUNCTION_NAME__   __func__ 
+    #endif
+#endif
+
 
 //*
 //*			STRUCTS
 //*
 
 
+	//	default SEXPs used to clear matrix column names and rows
+//extern	SEXP	minus1_char, minus2_char;
+#define			UNUSED_COLUMN_VALUE		mkChar("-1")
+#define			UNUSED_CELL_VALUE		mkChar("-2")
+#define			ERROR_CELL_VALUE		mkChar("-9999")
+
 
 //*
 //*			CLASSES
 //*
 
-
-	//	*******************	*************	******************
-	//	*******************	*************	******************
-	//	*******************	*************	******************
+class	vcff;
 
 
 
@@ -103,12 +137,11 @@
 //*
 
 
-//*
-//*			CODE
-//*
+extern	char	nucleotide_mapping[];
+
 
 //*
-//*			EXTERNS
+//*			CODE
 //*
 
 
@@ -155,17 +188,27 @@ inline bool	_internal_isSNP( const char * refptr, const char* altptr )
 }
 
 
-/*! Checks wether REF and ALT define a biallelic SNP (i.e. single-nucleotide REF and ALT alleles)
-**
-*/
-inline bool	_internal_isBiallelicSNP( const char * refptr, const char* altptr )
-{
-	if( refptr[1] == '\t' && altptr[1] == '\t' )//order of tests might accelerate tests
-			return true;
-	return false;
-}
 
-class vcff;
+
+		//
+		//	printing error message
+		//
+
+#define		RPRINT_ERROR		Rprintf("(!!) Error : %s : ", inf.caller_name ); Rprintf
+
+									
+#define		RPRINT_WARN			Rprintf("(!!) Error : %s : ", inf.caller_name ); Rprintf
+									
+#define		RPRINT_VCFLINE		Rprintf("Current VCF line:\n[%s]\n", inf.f->getFieldPtr( 0 ) );
+
+
+
+//*
+//*			EXTERNS
+//*
+
+	//
+	//
 bool	filterLine( vcff* f );
 
 
@@ -180,12 +223,12 @@ EXPORT	SEXP	SetWhopDebugLevel( SEXP lev );
 #if DEBUG
 #	define		df1		_df1
 #	define		df2		_df2
+#else
+		#define	df1		if( false ) _df1
+		#define	df2		if( false ) _df2
+#endif
 		void	_df1( const char *fmt, ...);
 		void	_df2( const char *fmt, ...);
-#else
-#	define		df1(...)	
-#	define		df2(...)	
-#endif
 
 		//
 		void	df(int level, const char *fmt, ...);
@@ -193,13 +236,15 @@ EXPORT	SEXP	SetWhopDebugLevel( SEXP lev );
 		//
 		int		strcmp_cis( const char *a, const char *b );
 
-//		bool	_internal_isSNP( const char * refptr, const char* altptr );
-
 	//	Open/Close
 	//
 EXPORT	SEXP	VCF_open( SEXP filename );
 EXPORT	SEXP	VCF_close( SEXP vcfptr );
 EXPORT	SEXP	VCF_eor( SEXP vcfptr );
+
+	//
+	//
+EXPORT  SEXP VCF_buildindex( SEXP filename_sexp );
 
 	//	Region
 	//
@@ -216,6 +261,7 @@ EXPORT	SEXP	VCF_getSampleNames( SEXP vcfptr );
 EXPORT	SEXP	VCF_selectSamples( SEXP vcfptr, SEXP samplesvec );
 EXPORT	SEXP	VCF_getSelectedSamples( SEXP vcfptr );
 EXPORT	SEXP	VCF_selectSampleByName( SEXP vcfptr, SEXP samplename );
+EXPORT  SEXP    VCF_getSampleByName( SEXP vcfptr, SEXP str_samplename );
 
 
 	//	Reading
@@ -224,13 +270,11 @@ EXPORT	SEXP	VCF_readLineRaw( SEXP vcfptr, SEXP str );
 EXPORT	SEXP	VCF_readLineRawFiltered( SEXP vcfptr, SEXP str );
 EXPORT	SEXP	VCF_readLineTSV( SEXP vcfptr );
 EXPORT	SEXP	VCF_readLineTSVFiltered( SEXP vcfptr );
-EXPORT	SEXP	VCF_readLineDF( SEXP vcfptr );
-EXPORT	SEXP	VCF_readLineDFFiltered( SEXP vcfptr );
+#if 0
+	EXPORT	SEXP	VCF_readLineDF( SEXP vcfptr );
+	EXPORT	SEXP	VCF_readLineDFFiltered( SEXP vcfptr );
+#endif
 EXPORT	SEXP	VCF_getBial( SEXP vcfptr, SEXP mat );
-
-
-EXPORT	SEXP	VCF_readIntoNucleotideMatrix( SEXP vcfptr, SEXP mat );
-EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat );
 
 EXPORT	SEXP	VCF_parseNextLine( SEXP vcfptr );
 EXPORT	SEXP	VCF_parseNextSNP( SEXP vcfptr );
@@ -248,6 +292,50 @@ EXPORT	SEXP	VCF_getInfoField( SEXP vcfptr, SEXP fieldnam );
 EXPORT	SEXP	VCF_getFormat( SEXP vcfptr );
 EXPORT	SEXP	VCF_getSample( SEXP vcfptr, SEXP stridx );
 
+	//	Matrix readers
+	//
+EXPORT	SEXP	VCF_readBialMultilineCodeMatrix( SEXP vcfptr, SEXP mat );
+
+EXPORT	SEXP	VCF_snpmat_diplo_bial_geno_filtered( SEXP vcfptr, SEXP mat );                                //              geno            filter          bial
+EXPORT	SEXP	VCF_snpmat_diplo_anyal_geno_filtered( SEXP vcfptr, SEXP mat );                               //              geno            filter          anyal
+EXPORT	SEXP	VCF_snpmat_diplo_bial_geno_unfiltered( SEXP vcfptr, SEXP mat );                              //              geno            NOFILT          bial
+EXPORT	SEXP	VCF_snpmat_diplo_anyal_geno_unfiltered( SEXP vcfptr, SEXP mat );                             //              geno            NOFILT          anyal
+EXPORT	SEXP	VCF_snpmat_diplo_bial_ishet_filtered( SEXP vcfptr, SEXP mat );                               //              isHet           filter          bial
+EXPORT	SEXP	VCF_snpmat_diplo_anyal_ishet_filtered( SEXP vcfptr, SEXP mat );                              //              isHet           filter          anyal
+EXPORT	SEXP	VCF_snpmat_diplo_bial_ishet_unfiltered( SEXP vcfptr, SEXP mat );                             //              isHet           NOFILT          bial
+EXPORT	SEXP	VCF_snpmat_diplo_anyal_ishet_unfiltered( SEXP vcfptr, SEXP mat );                    //              isHet           NOFILT          anyal
+EXPORT	SEXP	VCF_snpmat_diplo_bial_hasalt_filtered( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	VCF_snpmat_diplo_bial_hasalt_unfiltered( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	VCF_snpmat_diplo_anyal_hasalt_filtered( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	VCF_snpmat_diplo_anyal_hasalt_unfiltered( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	VCF_snpmat_diplo_bial_nucodes_filtered( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	VCF_snpmat_diplo_bial_nucodes_unfiltered( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	VCF_snpmat_diplo_anyal_nucodes_filtered( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	VCF_snpmat_diplo_anyal_nucodes_unfiltered( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	VCF_snpmat_anyplo_bial_nucodes_filtered( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	VCF_snpmat_anyplo_bial_nucodes_unfiltered( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	VCF_snpmat_anyplo_anyal_nucodes_filtered( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	VCF_snpmat_anyplo_anyal_nucodes_unfiltered( SEXP vcfptr, SEXP mat );
+		// obsolete ones
+EXPORT	SEXP	VCF_readIntoNucleotideMatrix( SEXP vcfptr, SEXP mat );	//?
+EXPORT	SEXP	VCF_readIntoCodeMatrix( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	read_snp_diplo_bial_int_altpresence( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	read_snp_diplo_bial_int_nuclcodes( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	read_snp_diplo_bial_str_allelechars( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	read_snp_diplo_bial_str_01( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	read_snp_diplo_bial_str_nuclcodes( SEXP vcfptr, SEXP mat );
+EXPORT	SEXP	read_snp_anyploid_multiallelic_int_nuclcodes( SEXP vcfptr, SEXP mat );
+
+	//	Rules
+	//
+EXPORT	SEXP	VCF_setRuleAction( SEXP vcfptr, SEXP ruleidx_sexp, SEXP action );
+EXPORT	SEXP	VCF_setRuleEnabled( SEXP vcfptr, SEXP ruleidx_sexp );
+EXPORT	SEXP	VCF_setRuleDisabled( SEXP vcfptr, SEXP ruleidx_sexp );
+EXPORT	SEXP	VCF_setRuleColumn( SEXP vcfptr, SEXP ruleidx_sexp, SEXP columnidx_sexp );
+EXPORT	SEXP	VCF_setRuleRefValues( SEXP vcfptr, SEXP ruleidx_sexp, SEXP ref1, SEXP ref2 );
+EXPORT	SEXP	VCF_setRuleField( SEXP vcfptr, SEXP ruleidx_sexp, SEXP field );
+EXPORT	SEXP	VCF_setRuleCmpOp( SEXP vcfptr, SEXP ruleidx_sexp, SEXP cmpop );
+
 
 	//	Misc. utility
 	//
@@ -260,7 +348,7 @@ EXPORT	SEXP	VCF_isInDel( SEXP vcfptr );
 	//	Filters
 	//
 EXPORT	SEXP	VCF_describeFilterConfig( SEXP vcfptr );
-EXPORT	SEXP	VCF_addFilter( SEXP vcfptr, SEXP fieldnam, SEXP cmptype, SEXP action, SEXP arg1, SEXP arg2 );
+EXPORT	SEXP	VCF_addFilter( SEXP vcfptr, SEXP columnidx, SEXP fieldnam, SEXP cmptype, SEXP action, SEXP arg1, SEXP arg2 );
 EXPORT	SEXP	VCF_clearFilters( SEXP vcfptr );
 
 	//		Tabix for R
@@ -272,7 +360,21 @@ EXPORT	SEXP	tabix_setRegion( SEXP tabix, SEXP tid, SEXP begin, SEXP endpos );
 EXPORT	SEXP	tabix_restartRegion( SEXP tabix );
 EXPORT	SEXP	tabix_getRegion( SEXP tabix );
 EXPORT	SEXP	tabix_readLine( SEXP tabix );
+EXPORT  SEXP	tabix_build( SEXP filename_sexp, SEXP sc_sexp, SEXP bc_sexp, SEXP ec_sexp, SEXP meta_sexp, SEXP lineskip_sexp );
 
+	//		FaIdx
+	//
+EXPORT	SEXP	FAI_query5( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end, SEXP resstr );
+EXPORT	SEXP	FAI_query3( SEXP faiptr, SEXP regionstr, SEXP resstr );
+EXPORT	SEXP	FAI_build( SEXP filename );
+EXPORT	SEXP	FAI_open( SEXP filename );
+EXPORT	SEXP	FAI_close( SEXP faiptr );
+EXPORT	SEXP	FAI_reopen( SEXP faiptr );
+//EXPORT	SEXP	faidx_test( SEXP fname, SEXP reg );
+
+	//
+	//
+EXPORT  SEXP BGZF_compress( SEXP in_filename_sexp, SEXP out_filename_sexp );
 
 	//		GTF <nonfunctional>
 	//

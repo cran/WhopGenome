@@ -19,6 +19,28 @@ Use .Call("tabix_restartRegion", tabfh ) to eliminate the slight overhead of usi
 \value{
 Tabix file handle
 }
+%XXXXXXXXXXXXXXX
+\examples{
+
+##
+##	Example :
+##
+gffgzfile  <- system.file("extdata", "ex.gff3.gz", package = "WhopGenome" )
+gffh <- tabix_open( gffgzfile )
+gffh
+##
+##
+##
+tabix_setregion( gffh, "ex.1", 1, 400 )
+tabix_read( gffh )
+tabix_read( gffh )
+tabix_restartregion( gffh )
+tabix_read( gffh )
+tabix_read( gffh )
+tabix_close( gffh )
+gffh
+
+}
 \author{
 Ulrich Wittelsbuerger
 }

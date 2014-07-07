@@ -26,3 +26,11 @@ Ulrich Wittelsbuerger
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 vcf_open
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	vcffile
+	vcf_close( vcffile )
+	vcffile
+	vcf_reopen( vcffile )
+	vcffile
+}

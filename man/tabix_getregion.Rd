@@ -20,6 +20,21 @@ Use .Call("tabix_getRegion", tabfh ) to eliminate the slight overhead of using t
 \value{
 Tabix file handle
 }
+%XXXXXXXXXXXXXXX
+\examples{
+
+##
+##	Example :
+##
+gffgzfile  <- system.file("extdata", "ex.gff3.gz", package = "WhopGenome" )
+gffh <- tabix_open( gffgzfile )
+gffh
+tabix_setregion( gffh, "ex.1", 1, 400 )
+tabix_getregion( gffh )
+tabix_close( gffh )
+gffh
+
+}
 \author{
 Ulrich Wittelsbuerger
 }

@@ -34,6 +34,14 @@ A vector of strings representing the sample names selected or present in the VCF
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	##
+	##	Example:
+	##
+	vcffile <- vcf_open( system.file( "extdata" , "ex.vcf.gz" , package="WhopGenome" ) )
+	allsamplenames <- vcf_getsamples( vcffile )
+	vcf_selectsamples( vcffile , allsamplenames )
+}
 \seealso{
 vcf_open
 }

@@ -27,16 +27,17 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <zlib.h>
-#define	_USE_KNETFILE	//@added ubw
+#define	_USE_KNETFILE
+	/*@added ubw*/
 #ifdef _USE_KNETFILE
 #include "knetfile.h"
 #endif
 
-//typedef int8_t bool;
+/*typedef int8_t bool;*/
 
 typedef struct {
     int file_descriptor;
-    char open_mode;  // 'r' or 'w'
+    char open_mode;  /* 'r' or 'w'*/
     int16_t owned_file, compress_level;
 #ifdef _USE_KNETFILE
 	union {
@@ -55,7 +56,7 @@ typedef struct {
     int block_offset;
 	int cache_size;
     const char* error;
-	void *cache; // a pointer to a hash table
+	void *cache; /* a pointer to a hash table*/
 } BGZF;
 
 #ifdef __cplusplus

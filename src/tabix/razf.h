@@ -65,8 +65,8 @@ typedef struct _gz_header_s _gz_header;
 #define RZ_BIN_SIZE ((1LLU << 32) / RZ_BLOCK_SIZE)
 
 typedef struct {
-	uint32_t *cell_offsets; // i
-	int64_t  *bin_offsets; // i / BIN_SIZE
+	uint32_t *cell_offsets; /* i */
+	int64_t  *bin_offsets; /* i / BIN_SIZE */
 	int size;
 	int cap;
 } ZBlockIndex;
@@ -93,7 +93,7 @@ typedef struct RandomAccessZFile  {
 	int64_t in, out, end, src_end;
 	/* in: n bytes total in; out: n bytes total out; */
 	/* end: the end of all data blocks, while the start of index; src_end: the true end position in uncompressed file */
-	int buf_flush; // buffer should be flush, suspend inflate util buffer is empty
+	int buf_flush; /* buffer should be flush, suspend inflate util buffer is empty */
 	int64_t block_pos, block_off, next_block_pos;
 	/* block_pos: the start postiion of current block  in compressed file */
 	/* block_off: tell how many bytes have been read from current block */

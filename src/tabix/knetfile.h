@@ -1,7 +1,8 @@
 #ifndef KNETFILE_H
 #define KNETFILE_H
 
-#define	_USE_KNETFILE	//@added ubw
+#define	_USE_KNETFILE
+	/*@added ubw*/
 
 #include <stdint.h>
 #include <fcntl.h>
@@ -17,7 +18,7 @@
 #define netclose(fd) closesocket(fd)
 #endif
 
-// FIXME: currently I/O is unbuffered
+/* FIXME: currently I/O is unbuffered*/
 
 #define KNF_TYPE_LOCAL 1
 #define KNF_TYPE_FTP   2
@@ -28,13 +29,13 @@ typedef struct knetFile_s {
 	int64_t offset;
 	char *host, *port;
 
-	// the following are for FTP only
+	/* the following are for FTP only*/
 	int ctrl_fd, pasv_ip[4], pasv_port, max_response, no_reconnect, is_ready;
 	char *response, *retr, *size_cmd;
-	int64_t seek_offset; // for lazy seek
+	int64_t seek_offset; /* for lazy seek */
     int64_t file_size;
 
-	// the following are for HTTP only
+	/* the following are for HTTP only*/
 	char *path, *http_host;
 } knetFile;
 

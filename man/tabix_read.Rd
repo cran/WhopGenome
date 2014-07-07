@@ -24,6 +24,23 @@ Instead of tabix_readraw() you can use .Call("tabix_readLine", tabfh ) to elimin
 \author{
 Ulrich Wittelsbuerger
 }
+%XXXXXXXXXXXXXXX
+\examples{
+
+##
+##	Example :
+##
+
+print("Opening and reading")
+gffgzfile  <- system.file("extdata", "ex.gff3.gz", package = "WhopGenome" )
+gffgzfile
+gffh <- tabix_open( gffgzfile )
+gffh
+stopifnot( gffh != NULL )
+tabix_read( gffh )
+tabix_close( gffh )
+gffh
+}
 \seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 tabix_open

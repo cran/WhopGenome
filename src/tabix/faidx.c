@@ -88,13 +88,13 @@ faidx_t *fai_build_core(RAZF *rz)
         name = 0; l_name = m_name = 0;
         len = line_len = line_blen = -1; state = 0; l1 = l2 = -1; offset = 0;
         while (razf_read(rz, &c, 1)) {
-                if (c == '\n') { // an empty line
+                if (c == '\n') { /* an empty line */
                         if (state == 1) {
                                 offset = razf_tell(rz);
                                 continue;
                         } else if ((state == 0 && len < 0) || state == 2) continue;
                 }
-                if (c == '>') { // fasta header
+                if (c == '>') { /* fasta header */
                         if (len >= 0)
                                 fai_insert_index(idx, name, len, line_len, line_blen, offset);
                         l_name = 0;
@@ -240,12 +240,12 @@ FILE *download_and_open(const char *fn)
         if (*p == '/') break;
     fn = p + 1;
 
-    // First try to open a local copy
+    /* First try to open a local copy */
     fp = fopen(fn, "r");
     if (fp)
         return fp;
 
-    // If failed, download from remote and open
+    /* If failed, download from remote and open */
     fp_remote = knet_open(url, "rb");
     if (fp_remote == 0) {
         PRINT_ERROR("[download_from_remote] fail to open remote file %s\n",url);
@@ -325,24 +325,24 @@ char *fai_fetch(const faidx_t *fai, const char *str, int *len)
         h = fai->hash;
         name_end = l = strlen(str);
         s = (char*)malloc(l+1);
-        // remove space
+        /* remove space */
         for (i = k = 0; i < l; ++i)
                 if (!isspace(str[i])) s[k++] = str[i];
         s[k] = 0; l = k;
-        // determine the sequence name
-        for (i = l - 1; i >= 0; --i) if (s[i] == ':') break; // look for colon from the end
+        /* determine the sequence name */
+        for (i = l - 1; i >= 0; --i) if (s[i] == ':') break; /* look for colon from the end */
         if (i >= 0) name_end = i;
-        if (name_end < l) { // check if this is really the end
+        if (name_end < l) { /* check if this is really the end */
                 int n_hyphen = 0;
                 for (i = name_end + 1; i < l; ++i) {
                         if (s[i] == '-') ++n_hyphen;
                         else if (!isdigit(s[i]) && s[i] != ',') break;
                 }
-                if (i < l || n_hyphen > 1) name_end = l; // malformated region string; then take str as the name
+                if (i < l || n_hyphen > 1) name_end = l; /* malformated region string; then take str as the name */
                 s[name_end] = 0;
                 iter = kh_get(s, h, s);
-                if (iter == kh_end(h)) { // cannot find the sequence name
-                        iter = kh_get(s, h, str); // try str as the name
+                if (iter == kh_end(h)) { /* cannot find the sequence name */
+                        iter = kh_get(s, h, str); /* try str as the name */
                         if (iter == kh_end(h)) {
                                 *len = 0;
                         free(s); return 0;
@@ -355,7 +355,7 @@ char *fai_fetch(const faidx_t *fai, const char *str, int *len)
                 return 0;
         };
         val = kh_value(h, iter);
-        // parse the interval
+        /* parse the interval */
         if (name_end < l) {
                 for (i = k = name_end + 1; i < l; ++i)
                         if (s[i] != ',') s[k++] = s[i];
@@ -370,7 +370,7 @@ char *fai_fetch(const faidx_t *fai, const char *str, int *len)
         if (beg > end) beg = end;
         free(s);
 
-        // now retrieve the sequence
+        /* now retrieve the sequence */
         l = 0;
         s = (char*)malloc(end - beg + 2);
         razf_seek(fai->rz, val.offset + beg / val.line_blen * val.line_len + beg % val.line_blen, SEEK_SET);
@@ -381,10 +381,10 @@ char *fai_fetch(const faidx_t *fai, const char *str, int *len)
         return s;
 }
 
-//
-//
-//
-
+/* */
+/* */
+/* */
+ 
 #ifdef FAIDX_MAIN
 int faidx_main(int argc, char *argv[])
 {
@@ -418,9 +418,9 @@ int faidx_main(int argc, char *argv[])
 int main(int argc, char *argv[]) { return faidx_main(argc, argv); }
 #endif
 
-//
-//
-//
+/* */
+/* */
+/* */
 
 int faidx_fetch_nseq(const faidx_t *fai) 
 {
@@ -435,7 +435,7 @@ char *faidx_fetch_seq(const faidx_t *fai, char *c_name, int p_beg_i, int p_end_i
     faidx1_t val;
         char *seq=NULL;
 
-    // Adjust position
+    /* Adjust position */
     iter = kh_get(s, fai->hash, c_name);
     if(iter == kh_end(fai->hash)) return 0;
     val = kh_value(fai->hash, iter);
@@ -445,7 +445,7 @@ char *faidx_fetch_seq(const faidx_t *fai, char *c_name, int p_beg_i, int p_end_i
     if(p_end_i < 0) p_end_i = 0;
     else if(val.len <= p_end_i) p_end_i = val.len - 1;
 
-    // Now retrieve the sequence 
+    /* Now retrieve the sequence  */
         l = 0;
         seq = (char*)malloc(p_end_i - p_beg_i + 2);
         razf_seek(fai->rz, val.offset + p_beg_i / val.line_blen * val.line_len + p_beg_i % val.line_blen, SEEK_SET);

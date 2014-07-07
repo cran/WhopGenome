@@ -181,13 +181,13 @@ static RAZF* razf_open_w(int fd){
 	rz->stream->avail_out = RZ_BUFFER_SIZE;
 	rz->stream->next_out  = rz->outbuf;
 	rz->header = calloc(sizeof(gz_header), 1);
-	rz->header->os    = 0x03; //Unix
+	rz->header->os    = 0x03; /*Unix */
 	rz->header->text  = 0;
 	rz->header->time  = 0;
 	rz->header->extra = malloc(7);
 	strncpy((char*)rz->header->extra, "RAZF", 4);
-	rz->header->extra[4] = 1; // obsolete field
-	// block size = RZ_BLOCK_SIZE, Big-Endian
+	rz->header->extra[4] = 1; /* obsolete field */
+	/* block size = RZ_BLOCK_SIZE, Big-Endian */
 	rz->header->extra[5] = RZ_BLOCK_SIZE >> 8;
 	rz->header->extra[6] = RZ_BLOCK_SIZE & 0xFF;
 	rz->header->extra_len = 7;
@@ -290,7 +290,7 @@ static void _razf_buffered_write(RAZF *rz, const void *data, int size){
 			n = RZ_BUFFER_SIZE - rz->buf_len;
 			for(i=0;i<n;i++) ((char*)rz->inbuf + rz->buf_len)[i] = ((char*)data)[i];
 			size -= n;
-			data += n;
+			data = (char*)data + n; /*data += n; */
 			rz->buf_len += n;
 		}
 	}
@@ -304,7 +304,7 @@ int razf_write(RAZF* rz, const void *data, int size){
 	while(rz->in + rz->buf_len + size >= next_block){
 		n = next_block - rz->in - rz->buf_len;
 		_razf_buffered_write(rz, data, n);
-		data += n;
+		data = (char*)data + n; /* data += n; */
 		size -= n;
 		razf_flush(rz);
 		add_zindex(rz, rz->in, rz->out);
@@ -331,7 +331,7 @@ static int _read_gz_header(unsigned char *data, int size, int *extra_off, int *e
 	method = data[2];
 	flags  = data[3];
 	if(method != Z_DEFLATED || (flags & RESERVED)) return 0;
-	n = 4 + 6; // Skip 6 bytes
+	n = 4 + 6; /* Skip 6 bytes */
 	*extra_off = n + 2;
 	*extra_len = 0;
 	if(flags & EXTRA_FIELD){
@@ -399,7 +399,7 @@ static RAZF* razf_open_r(int fd, int _load_index){
 	ret = inflateInit2(rz->stream, -WINDOW_BITS);
 	if(ret != Z_OK){ inflateEnd(rz->stream); goto PLAIN_FILE;}
 	rz->stream->avail_in = n - rz->header_size;
-	rz->stream->next_in  = rz->inbuf + rz->header_size;
+	rz->stream->next_in  = (unsigned char*)rz->inbuf + rz->header_size;	/* @ added (unsigned char*) cast to avoid -Wpointer-arith warning in clang */
 	rz->stream->avail_out = RZ_BUFFER_SIZE;
 	rz->stream->next_out  = rz->outbuf;
 	rz->file_type = FILE_TYPE_GZ;
@@ -407,7 +407,7 @@ static RAZF* razf_open_r(int fd, int _load_index){
 	rz->block_pos = rz->header_size;
 	rz->next_block_pos = rz->header_size;
 	rz->block_off = 0;
-	if(ext_len < 7 || memcmp(rz->inbuf + ext_off, c, 4) != 0) return rz;
+	if(ext_len < 7 || memcmp((char*)rz->inbuf + ext_off, c, 4) != 0) return rz;	/* @ added (char*) cast to avoid -Wpointer-arith warning in clang */
 	if(((((unsigned char*)rz->inbuf)[ext_off + 5] << 8) | ((unsigned char*)rz->inbuf)[ext_off + 6]) != RZ_BLOCK_SIZE){
 		PRINT_ERROR(" -- WARNING: RZ_BLOCK_SIZE is not %d, treat source as gz file.  in %s -- %s:%d --\n", RZ_BLOCK_SIZE, __FUNCTION__, __FILE__, __LINE__);
 		return rz;
@@ -638,13 +638,13 @@ int razf_read(RAZF *rz, void *data, int size){
 				for(i=0;i<size;i++) ((char*)data)[i] = ((char*)rz->outbuf + rz->buf_off)[i];
 				rz->buf_off += size;
 				rz->buf_len -= size;
-				data += size;
+				data = (char*)data + size;/* @ data += size; */
 				rz->block_off += size;
 				size = 0;
 				break;
 			} else {
 				for(i=0;i<rz->buf_len;i++) ((char*)data)[i] = ((char*)rz->outbuf + rz->buf_off)[i];
-				data += rz->buf_len;
+				data = (char*)data + rz->buf_len; /* @data += rz->buf_len; */
 				size -= rz->buf_len;
 				rz->block_off += rz->buf_len;
 				rz->buf_off = 0;
@@ -738,9 +738,9 @@ int64_t razf_jump(RAZF *rz, int64_t block_start, int block_offset){
 	}
 	if(block_start == rz->block_pos && block_offset >= rz->block_off) {
 		block_offset -= rz->block_off;
-		goto SKIP; // Needn't reset inflate
+		goto SKIP; /* Needn't reset inflate */
 	}
-	if(block_start  == 0) block_start = rz->header_size; // Automaticly revist wrong block_start
+	if(block_start  == 0) block_start = rz->header_size; /* Automaticly revist wrong block_start */
 	_razf_reset_read(rz, block_start, 0);
 	SKIP:
 	if(block_offset) razf_skip(rz, block_offset);

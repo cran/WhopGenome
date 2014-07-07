@@ -8,6 +8,7 @@
 \alias{vcf_getFilter}
 \alias{vcf_getInfo}
 \alias{vcf_getInfoField}
+\alias{vcf_getFormat}
 \alias{vcf_getSample}
 \title{
 Return a specific piece of information from the last line processed with vcf_parseNextSNP or vcf_parsenextline.
@@ -25,6 +26,7 @@ Return a specific piece of information from the last line processed with vcf_par
 	vcf_getFilter( vcffh )
 	vcf_getInfo( vcffh )
 	vcf_getInfoField( vcffh, fieldnam )
+	vcf_getFormat( vcffh )
 	vcf_getSample( vcffh, stridx )
 }
 \arguments{
@@ -38,12 +40,26 @@ Replace getChrom by getPos, getID, getRef, getAlt, getQual, getFilter, getInfo, 
 add the respective function arguments in the order given above to call the respective other function.
 }
 \value{
-None if the call failed or the respective data extracted from the last read line.
+None if the call failed, otherwise the respective data from the last read line is extracted.
 }
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	##
+	##	Example:
+	##
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	vcf_parseNextSNP( vcffile )
+	vcf_getChrom( vcffile )
+	vcf_getPos( vcffile )
+	vcf_getID( vcffile )
+	vcf_getAlt( vcffile )
+	vcf_getQual( vcffile )
+	vcf_getFilter( vcffile )
+	vcf_getInfoField( vcffile, "AA" )
+}
 \seealso{
-vcf_isSNP
+\code{\link{vcf_isSNP}}
 }
 

@@ -21,6 +21,22 @@ TRUE if call succeeds, FALSE if it fails.
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	##
+	##	Example :
+	##
+	faifile  <- system.file("extdata", "ex.fasta", package = "WhopGenome")
+	faifh <- fai_open( faifile )
+	stopifnot( faifh != NULL )
+	result <- ""
+	fai_query5( faifh , "1", 100 , 200, result )
+	print( result )
+	fai_close( faifh )
+	fai_reopen( faifh )
+	result <- ""
+	fai_query5( faifh , "1", 100 , 110, result )
+	print( result )
+}
 \seealso{
 fai_open
 }

@@ -18,6 +18,20 @@ Use .Call("FAI_build", filename ) to eliminate the overhead of using the R wrapp
 \value{
 TRUE if call succeeds, FALSE if it fails.
 }
+%XXXXXXXXXXXXXXX
+\examples{
+
+##
+##	Example :
+##
+faifile  <- system.file("extdata", "ex.fasta", package = "WhopGenome")
+faiindexfile <- paste( sep="", faifile, ".fai" )	# construct name of index file
+file.remove( faiindexfile )				# remove existing index
+fai_build( faifile )					# re-create index
+stopifnot( file.exists(faiindexfile) )	# check whether index file exists
+print( "All OK" )
+}
+%XXXXXXXXXXXXXXX
 \author{
 Ulrich Wittelsbuerger
 }

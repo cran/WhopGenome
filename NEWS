@@ -1,0 +1,18 @@
+Changes in WhopGenome 0.8.9
+===========================
+
+BUGS FIXED:
+
+- 
+
+CHANGES:
+
+- re-designed matrix functions :
+	- function naming system
+	- specialised C++ functions for each variation
+	- obsolete: read_snp_diplo_bial_str_01 	- use VCF_snpmat_diplo_bial_hasalt_(un)filtered
+	- obsolete : read_snp_diplo_bial_str_nuclcodes - use VCF_snpmat_diplo_bial_nucodes_(un)filtered
+
+NEW FEATURES:
+
+- additional R functions for more detailed filter rule management 

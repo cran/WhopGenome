@@ -5,9 +5,13 @@
 \alias{VCF_read_snp_diplo_bial_str_allelechars}
 \alias{VCF_read_snp_diplo_bial_str_nuclcodes}
 \title{
-Read batch of biallelic SNP data into matrices
+(OBSOLETE) Read batch of biallelic SNP data into matrices
 }
 \description{
+OBSOLETE : please refer to documentation for "VCF_snpmat_diplo_bial_geno_filtered" to
+find out about their replacements.\cr
+
+
 Reads biallelic SNP data in different representations into pre-allocated matrices.
 }
 \usage{
@@ -22,6 +26,9 @@ VCF_read_snp_diplo_bial_str_nuclcodes( vcffh , mat )
 \item{mat}{A matrix of either integer or string type, corresponding to _str_ or _int_ named methods}
 }
 \details{
+OBSOLETE : please refer to documentation for "VCF_snpmat_diplo_bial_geno_filtered" to
+find out about their replacements.\cr
+
 Prerequisites are:
 - a valid, open VCF file handle, passed as vcffh
 - a valid sample selection (vcf_getsamples,vcf_getselectedsamples,vcf_selectsmaples)
@@ -51,4 +58,10 @@ TRUE or FALSE
 }
 \author{
 Ulrich Wittelsbuerger
+}
+\examples{
+	warning("These functions are obsolete! Consult VCF_snpmat_diplo_bial_geno_filtered etc.")
+}
+\seealso{
+\code{\link{VCF_snpmat_diplo_bial_geno_filtered}}
 }

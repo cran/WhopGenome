@@ -31,7 +31,7 @@
 #  include <stddef.h>
 #endif
 
-//@ubw : added to fix warnings 'implicit declaration of read/close/write/lseek' under Ubuntu-based Linux
+/*@ubw : added to fix warnings 'implicit declaration of read/close/write/lseek' under Ubuntu-based Linux*/
 #include <unistd.h>
 
 #if defined(__TURBOC__) || defined(_MSC_VER) || defined(_WIN32)

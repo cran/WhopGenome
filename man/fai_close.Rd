@@ -18,6 +18,19 @@ Use .Call("FAI_close", faifh ) to eliminate the slight overhead of using the R w
 \value{
 TRUE if call succeeds, FALSE if it fails.
 }
+%XXXXXXXXXXXXXXX
+\examples{
+
+##
+##	Example :
+##
+faifile  <- system.file("extdata", "ex.fasta", package = "WhopGenome")
+faifh <- fai_open( faifile )
+stopifnot( faifh != NULL )
+fai_close( faifh )
+
+}
+%XXXXXXXXXXXXXXX
 \author{
 Ulrich Wittelsbuerger
 }

@@ -21,6 +21,12 @@ TRUE or FALSE.
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	vcf_parseNextSNP( vcffile )
+	vcf_getPos( vcffile )
+	vcf_isINDEL( vcffile )
+}
 \seealso{
 vcf_isSNP
 }

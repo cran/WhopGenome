@@ -16,6 +16,15 @@ Send a SQL query string to the UCSC Genome Browser SQL server
 \value{
 	The returned value(s) from the UCSC Genome Browser.
 }
+%XXXXXXXXXXXXXXX
+\examples{
+
+##
+##	Example :
+##
+
+}
+%XXXXXXXXXXXXXXX
 \author{
 Ulrich Wittelsbuerger
 }

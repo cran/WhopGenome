@@ -22,6 +22,11 @@ Vector with contig and/or chromosome identifiers.
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	vcf_getcontignames( vcffile )
+	# [1] "Y"
+}
 \seealso{
 vcf_setregion
 }

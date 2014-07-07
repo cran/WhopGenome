@@ -34,7 +34,7 @@
 //*
 
 
-/*! Abstract base class of all functors used to 
+/*! Abstract base class of all functors used to load matrix representations from VCF files
 */
 class MatrixLoaderBaseClass
 {
@@ -82,10 +82,12 @@ public:
 	//-
 	//-		FIXED METHODS
 	//-
-	
-	//
-	//		default impl to find a biallelic SNP line
-	//
+
+
+	//-
+	//-		default impl to find a biallelic SNP line
+	//-
+	//-
 	bool		findNextLine_BiallelicSNP( vcff * f, char** refptr, char**altptr )
 	{
 	
@@ -157,10 +159,71 @@ public:
 		}//while( could read another line from VCF )
 		
 		return bLineParsed;
-	}//
+
+	}//...findNextLine_BiallelicSNP()
 	
 	
-};
+	//-
+	//-		default impl to find SNPs without regard for the number of alleles
+	//-			(actual POLY-morphism instead of dimorphism)
+	//-
+	bool		findNextLine_AnySNP( vcff * f, char** refptr, char**altptr )
+	{
+	
+		bool	bLineParsed=false;
+		
+		//
+		//	read lines until a SNP line is found (or the chromosomal region's end is reached)
+		//
+		while( (bLineParsed = f->parseNextLine()) == true )
+		{
+			
+			// make sure we have a single-nucleotide reference allele
+			//
+			*refptr = (char*)f->getFieldPtr( REF );		//REFerence allele
+			//Rprintf("fnany: ref(%s)\n",*refptr );
+			if( *refptr==0 || (*refptr)[1] != '\t' )
+			{
+				continue;
+			}
+			
+			// make sure all alternative alleles are single nucleotides
+			//
+			*altptr = (char*)f->getFieldPtr( ALT );		//ALTernative allele
+			//Rprintf("fnany: alt(%s)\n",*altptr );
+			if( *altptr == 0 )
+			{
+				continue;
+			}
+			
+			int i=1;
+			//Rprintf("fnany1: (%c)\n",(*altptr)[i] );
+			while( (*altptr)[i] == ',' )
+			{
+				i+=2;
+				//Rprintf("fnanyX: (%c)\n",(*altptr)[i] );
+			}
+						
+			if( (*altptr)[i] != '\t' )
+			{
+				//Rprintf("fnanyN: (%c) -- CONT\n",(*altptr)[i] );
+				continue;
+			}
+			
+			
+			//Rprintf("fnanyE: (%c) OK\n",(*altptr)[i] );
+			
+			break;
+
+		}//while( could read another line from VCF )
+		
+		
+		//Rprintf("fnany: (%s)\n",bLineParsed?"OK":"NO" );
+		return bLineParsed;
+
+	}//...findNextLine_AnySNP()
+	
+};//...class MatrixLoaderBaseClass
 
 
 

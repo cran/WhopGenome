@@ -21,6 +21,11 @@ to eliminate the overhead of using the R wrapper function.
 \value{
 A raw string representing a line of data from the file
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	d <- ""
+	vcf_readLineRaw( vcffile , d )
+}
 \author{
 Ulrich Wittelsbuerger
 }

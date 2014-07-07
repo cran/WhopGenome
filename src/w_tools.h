@@ -30,7 +30,7 @@
 //*			DEFINES
 //*
 
-
+#define		massert( cond )
 
 //*
 //*			STRUCTS
@@ -73,7 +73,8 @@ protected:
 */
 class ParseFunctor {
 public:
-	virtual	bool	operator()( const char * s, int len ){return false;};
+	//virtual ~ParseFunctor(){}
+	virtual	bool	operator()( const char * s, int len ) = 0;/*{return false;};*/
 };
 
 

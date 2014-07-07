@@ -24,7 +24,21 @@ TRUE if the region could be rewound, FALSE if not.
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	##
+	##	Example:
+	##
+	vcffile <- vcf_open( system.file( "extdata" , "ex.vcf.gz" , package="WhopGenome" ) )
+	vcf_setregion(vcffile, "Y", 1, 100000 )
+	
+	vcf_readLineVec( vcffile )
+	vcf_readLineVec( vcffile )
 
+	vcf_restartregion( vcffile )
+
+	vcf_readLineVec( vcffile )
+	vcf_readLineVec( vcffile )
+}
 \seealso{
 vcf_setregion, vcf_open
 }

@@ -20,7 +20,7 @@ typedef struct __kstring_t {
 int ksprintf(kstring_t *s, const char *fmt, ...);
 int ksplit_core(char *s, int delimiter, int *_max, int **_offsets);
 
-// calculate the auxiliary array, allocated by calloc()
+/* calculate the auxiliary array, allocated by calloc() */
 int *ksBM_prep(const uint8_t *pat, int m);
 
 /* Search pat in str and returned the list of matches. The size of the

@@ -21,6 +21,12 @@ Use .Call("VCF_isSNP", vcff ) to eliminate the overhead of using the R wrapper f
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	vcf_parseNextSNP( vcffile )
+	vcf_getPos( vcffile )
+	vcf_isSNP( vcffile )
+}
 \seealso{
 vcf_isINDEL
 }

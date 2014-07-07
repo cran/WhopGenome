@@ -22,6 +22,10 @@ to eliminate the overhead of using the R wrapper function.
 \value{
 A vector where each element is a field from a line of data in the VCF
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	vcf_readLineVec( vcffile )
+}
 \author{
 Ulrich Wittelsbuerger
 }

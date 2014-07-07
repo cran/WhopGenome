@@ -2,11 +2,10 @@ Package: WhopGenome
 Type: Package
 Title: High-speed processing of whole-genome VCF-format variation data,
         FASTA-format sequence data and several alignments formats.
-Version: 0.8.2
-Date: 2013-12-03
+Version: 0.8.9
+Date: 2014-07-07
 Author: Ulrich Wittelsbuerger
-Maintainer: Ulrich Wittelsbuerger
-        <ulrich.wittelsbuerger@uni-duesseldorf.de>
+Maintainer: Ulrich Wittelsbuerger <ulrich.wittelsbuerger@uni-duesseldorf.de>
 Depends: R (>= 1.8.0)
 Suggests: RMySQL, DBI, AnnotationDbi
 Description: WhopGenome's provides very fast access to whole genome, population scale variation data
@@ -27,7 +26,7 @@ Copyright: This package uses zlib, Tabix, bgzf and faidx. Zlib by
         of printf, fprintf on stderr and functions that would terminate
         a running R session by R-supplied equivalents as well as
         modifications that eliminate most compiler warnings.
-Packaged: 2013-12-03 13:40:38 UTC; wittelsbuerger
+Packaged: 2014-08-26 14:01:43 UTC; uli
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2013-12-03 14:55:59
+Date/Publication: 2014-08-27 16:38:45

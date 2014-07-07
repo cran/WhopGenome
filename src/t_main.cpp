@@ -27,13 +27,6 @@
 
 
 #include	"w_common.h"
-/*
-	//	R includes
-	//
-#include	<R.h>
-#include	<Rinternals.h>
-#include	<R_ext/Rdynload.h>
-*/
 
 
 	//

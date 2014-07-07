@@ -15,6 +15,10 @@ vcf_valid(vcffh)
 \value{
 TRUE or FALSE
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	vcf_valid( vcffile )
+}
 \author{
 Ulrich Wittelsbuerger
 }

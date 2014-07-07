@@ -22,6 +22,21 @@ Use .Call("FAI_query5", faifh, sequencename, beginpos, endpos, resultstring ) to
 \value{
 TRUE if call succeeds, FALSE if it fails.
 }
+%XXXXXXXXXXXXXXX
+\examples{
+
+##
+##	Example :
+##
+faifile  <- system.file("extdata", "ex.fasta", package = "WhopGenome")
+faifh <- fai_open( faifile )
+stopifnot( faifh != NULL )
+result <- ""
+fai_query5( faifh , "1", 9 , 20, result )
+print( result )
+fai_close( faifh )
+
+}
 \author{
 Ulrich Wittelsbuerger
 }

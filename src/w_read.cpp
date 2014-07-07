@@ -29,7 +29,6 @@
 		SEXP	VCF_readLineRaw( SEXP vcfptr )
 		SEXP	VCF_readLineTSV( SEXP vcfptr )
 		SEXP	VCF_readLineDF( SEXP vcfptr )
-		inline bool isBiallelic( const char * _REF, const char* _ALT )
 		SEXP VCF_getBial( SEXP vcfptr, SEXP mat )
 	-	----------------------------------------------------------
 		SEXP	VCF_countSNPs( SEXP vcfptr )
@@ -64,8 +63,6 @@ using namespace std;
 //*
 //*			DEFINES
 //*
-
-//#define		ALLOW_NONSTANDARD_VCF_GT
 
 
 #define		__INTERNAL_RETURN_FIELD_OF_LINE( fld )\
@@ -133,8 +130,6 @@ EXPORT	SEXP	VCF_countBiallelicSNPs( SEXP vcfptr )
 	int numsnps=0;
 	while( f->parseNextLine() )
 	{
-
-		//if( _internal_isBiallelicSNP( f->getFieldPtr( REF ), f->getFieldPtr( ALT ) ) )
 		
 		//
 		const char * rp = f->getFieldPtr( REF );
@@ -729,12 +724,12 @@ EXPORT SEXP VCF_readLineTSVFiltered( SEXP vcfptr )
 	//
 	//
 	RString resvec;
-	int runs=1;
+//	int runs=1;
 	while( f->parseNextLine() )
 	{
 		//
-		if( runs-- <= 0 )
-			break;
+//		if( runs-- <= 0 )
+//			break;
 		
 		//
 		if( false == filterLine( f ) )
@@ -902,7 +897,6 @@ EXPORT SEXP VCF_readLineDFFiltered( SEXP vcfptr )
 	return R_NilValue;
     //
 }
-
 
 
 

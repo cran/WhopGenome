@@ -18,6 +18,17 @@ Use .Call("FAI_open", filename ) to eliminate the slight overhead of using the R
 \value{
 Returns a FAIhandle that is required for fai_query3, fai_query5, fai_close
 }
+%XXXXXXXXXXXXXXX
+\examples{
+
+##
+##	Example :
+##
+faifile  <- system.file("extdata", "ex.fasta", package = "WhopGenome")
+faifh <- fai_open( faifile )
+stopifnot( faifh != NULL )
+}
+%XXXXXXXXXXXXXXX
 \author{
 Ulrich Wittelsbuerger
 }

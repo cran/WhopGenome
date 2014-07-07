@@ -1,6 +1,7 @@
 
-//
-#define		_USE_KNETFILE	//@added ubw
+/**/
+#define		_USE_KNETFILE
+	/*@added ubw*/
 #define		ONDBG			if(0)
 
 #include <ctype.h>
@@ -16,7 +17,7 @@
 #include "tabix.h"
 
 #define TAD_MIN_CHUNK_GAP 32768
-// 1<<14 is the size of minimum bin.
+/* 1<<14 is the size of minimum bin.*/
 #define TAD_LIDX_SHIFT    14
 
 /*@added ubw : to resolve problems with uint64_t-typed arguments of error messages printed with fprintf*/
@@ -58,7 +59,7 @@ struct __ti_index_t {
 };
 
 struct __ti_iter_t {
-	int from_first; // read from the first record; no random access
+	int from_first; /* read from the first record; no random access*/
 	int tid, beg, end, n_off, i, finished;
 	uint64_t curr_off;
 	kstring_t str;
@@ -89,7 +90,7 @@ int ti_readline(BGZF *fp, kstring_t *str)
 		++l;
 		if (c != '\r') kputc(c, str);
 	}
-	if (c < 0 && l == 0) return -1; // end of file
+	if (c < 0 && l == 0) return -1; //end of file
 	return str->l;
 }
 */
@@ -152,9 +153,9 @@ static int get_tid(ti_index_t *idx, const char *ss)
 	khint_t k;
 	int tid;
 	k = kh_get(s, idx->tname, ss);
-	if (k == kh_end(idx->tname)) { // a new target sequence
+	if (k == kh_end(idx->tname)) { /* a new target sequence*/
 		int ret, size;
-		// update idx->n, ->max, ->index and ->index2
+		/* update idx->n, ->max, ->index and ->index2*/
 		if (idx->n == idx->max) {
 			idx->max = idx->max? idx->max<<1 : 8;
 			idx->index = realloc(idx->index, idx->max * sizeof(void*));
@@ -162,7 +163,7 @@ static int get_tid(ti_index_t *idx, const char *ss)
 		}
 		memset(&idx->index2[idx->n], 0, sizeof(ti_lidx_t));
 		idx->index[idx->n++] = kh_init(i);
-		// update ->tname
+		/* update ->tname*/
 		tid = size = kh_size(idx->tname);
 		k = kh_put(s, idx->tname, strdup(ss), &ret);
 		kh_value(idx->tname, k) = size;
@@ -182,7 +183,7 @@ int ti_get_intv(const ti_conf_t *conf, int len, char *line, ti_interval_t *intv)
 			if (id == conf->sc) {
 				intv->ss = line + b; intv->se = line + i;
 			} else if (id == conf->bc) {
-				// here ->beg is 0-based.
+				/* here ->beg is 0-based.*/
 				intv->beg = intv->end = strtol(line + b, &s, 0);
 				if (!(conf->preset&TI_FLAG_UCSC)) --intv->beg;
 				else ++intv->end;
@@ -192,7 +193,7 @@ int ti_get_intv(const ti_conf_t *conf, int len, char *line, ti_interval_t *intv)
 				if ((conf->preset&0xffff) == TI_PRESET_GENERIC) {
 					if (id == conf->ec) intv->end = strtol(line + b, &s, 0);
 				} else if ((conf->preset&0xffff) == TI_PRESET_SAM) {
-					if (id == 6) { // CIGAR
+					if (id == 6) { /* CIGAR*/
 						int l = 0, op;
 						char *t;
 						for (s = line + b; s < line + i;) {
@@ -205,10 +206,10 @@ int ti_get_intv(const ti_conf_t *conf, int len, char *line, ti_interval_t *intv)
 						intv->end = intv->beg + l;
 					}
 				} else if ((conf->preset&0xffff) == TI_PRESET_VCF) {
-					// FIXME: the following is NOT tested and is likely to be buggy
+					/* FIXME: the following is NOT tested and is likely to be buggy*/
 					if (id == 4) {
 						if (b < i) intv->end = intv->beg + (i - b);
-					} else if (id == 8) { // look for "END="
+					} else if (id == 8) { /* look for "END="*/
 						int c = line[i];
 						line[i] = 0;
 						s = strstr(line + b, "END=");
@@ -257,7 +258,7 @@ static int get_intv(ti_index_t *idx, kstring_t *str, ti_intv_t *intv)
  * indexing *
  ************/
 
-// requirement: len <= LEN_MASK
+/* requirement: len <= LEN_MASK*/
 static inline void insert_offset(khash_t(i) *h, int bin, uint64_t beg, uint64_t end)
 {
 	khint_t k;
@@ -265,7 +266,7 @@ static inline void insert_offset(khash_t(i) *h, int bin, uint64_t beg, uint64_t 
 	int ret;
 	k = kh_put(i, h, bin, &ret);
 	l = &kh_value(h, k);
-	if (ret) { // not present
+	if (ret) { /*not present*/
 		l->m = 1; l->n = 0;
 		l->list = (pair64_t*)calloc(l->m, 16);
 	}
@@ -313,10 +314,10 @@ static void merge_chunks(ti_index_t *idx)
 			for (l = 1; l < p->n; ++l) {
 				if (p->list[m].v>>16 == p->list[l].u>>16) p->list[m].v = p->list[l].v;
 				else p->list[++m] = p->list[l];
-			} // ~for(l)
+			} /* ~for(l)*/
 			p->n = m + 1;
-		} // ~for(k)
-	} // ~for(i)
+		} /* ~for(k)*/
+	} /* ~for(i)*/
 }
 
 static void fill_missing(ti_index_t *idx)
@@ -361,24 +362,24 @@ ti_index_t *ti_index_core(BGZF *fp, const ti_conf_t *conf)
         if ( intv.beg<0 || intv.end<0 )
         {
             PRINT_ERROR( "[ti_index_core] the indexes overlap or are out of bounds\n");
-            return(0);//exit(1);
+            return(0);/*exit(1);*/
         }
-		if (last_tid != intv.tid) { // change of chromosomes
+		if (last_tid != intv.tid) { /* change of chromosomes*/
             if (last_tid>intv.tid )
             {
-                PRINT_ERROR( "[ti_index_core] the chromosome blocks not continuous at line %" PRIu64 ", is the file sorted? [pos %d]\n",lineno,intv.beg+1);	//@ ubw : changed to use " PRIu64 " in place of %d/%ld/%I64d
-                return(0);//exit(1);
+                PRINT_ERROR( "[ti_index_core] the chromosome blocks not continuous at line %" PRIu64 ", is the file sorted? [pos %d]\n",lineno,intv.beg+1);	/*@ ubw : changed to use " PRIu64 " in place of %d/%ld/%I64d
+                return(0);/*exit(1);*/
             }
 			last_tid = intv.tid;
 			last_bin = 0xffffffffu;
 		} else if (last_coor > intv.beg) {
-			PRINT_ERROR( "[ti_index_core] the file out of order at line %" PRIu64 "\n", lineno);	//@ ubw : changed to use " PRIu64 " in place of %d/%ld/%I64d
-			return(0);//exit(1);
+			PRINT_ERROR( "[ti_index_core] the file out of order at line %" PRIu64 "\n", lineno);	/*@ ubw : changed to use " PRIu64 " in place of %d/%ld/%I64d  */
+			return(0);/*exit(1);*/
 		}
 		tmp = insert_offset2(&idx->index2[intv.tid], intv.beg, intv.end, last_off);
 		if (last_off == 0) offset0 = tmp;
-		if (intv.bin != last_bin) { // then possibly write the binning index
-			if (save_bin != 0xffffffffu) // save_bin==0xffffffffu only happens to the first record
+		if (intv.bin != last_bin) { /* then possibly write the binning index*/
+			if (save_bin != 0xffffffffu) /* save_bin==0xffffffffu only happens to the first record*/
 				insert_offset(idx->index[save_tid], save_bin, save_off, last_off);
 			save_off = last_off;
 			save_bin = last_bin = intv.bin;
@@ -386,9 +387,9 @@ ti_index_t *ti_index_core(BGZF *fp, const ti_conf_t *conf)
 			if (save_tid < 0) break;
 		}
 		if (bgzf_tell(fp) <= last_off) {
-			PRINT_ERROR( "[ti_index_core] bug in BGZF: %" PRIu64 " < %" PRIu64 "\n",	//@ ubw : changed to use " PRIu64 " in place of %d/%ld/%I64d
+			PRINT_ERROR( "[ti_index_core] bug in BGZF: %" PRIu64 " < %" PRIu64 "\n",	/*@ ubw : changed to use " PRIu64 " in place of %d/%ld/%I64d */
 					bgzf_tell(fp), last_off);
-			return(0);//exit(1);
+			return(0);/*exit(1);*/
 		}
 		last_off = bgzf_tell(fp);
 		last_coor = intv.beg;
@@ -410,13 +411,13 @@ void ti_index_destroy(ti_index_t *idx)
 	khint_t k;
 	int i;
 	if (idx == 0) return;
-	// destroy the name hash table
+	/* destroy the name hash table*/
 	for (k = kh_begin(idx->tname); k != kh_end(idx->tname); ++k) {
 		if (kh_exist(idx->tname, k))
 			free((char*)kh_key(idx->tname, k));
 	}
 	kh_destroy(s, idx->tname);
-	// destroy the binning index
+	/* destroy the binning index*/
 	for (i = 0; i < idx->n; ++i) {
 		khash_t(i) *index = idx->index[i];
 		ti_lidx_t *index2 = idx->index2 + i;
@@ -428,7 +429,7 @@ void ti_index_destroy(ti_index_t *idx)
 		free(index2->offset);
 	}
 	free(idx->index);
-	// destroy the linear index
+	/* destroy the linear index*/
 	free(idx->index2);
 	free(idx);
 }
@@ -448,12 +449,14 @@ void ti_index_save(const ti_index_t *idx, BGZF *fp)
 		bgzf_write(fp, bam_swap_endian_4p(&x), 4);
 	} else bgzf_write(fp, &idx->n, 4);
 	WHOP_ASSERT(sizeof(ti_conf_t) == 24);
-	if (ti_is_be) { // write ti_conf_t;
+	if (ti_is_be) {
+		/* write ti_conf_t;*/
 		uint32_t x[6];
 		memcpy(x, &idx->conf, 24);
 		for (i = 0; i < 6; ++i) bgzf_write(fp, bam_swap_endian_4p(&x[i]), 4);
 	} else bgzf_write(fp, &idx->conf, sizeof(ti_conf_t));
-	{ // write target names
+	{
+		/* write target names*/
 		char **name;
 		int32_t l = 0;
 		name = calloc(kh_size(idx->tname), sizeof(void*));
@@ -471,16 +474,16 @@ void ti_index_save(const ti_index_t *idx, BGZF *fp)
 	for (i = 0; i < idx->n; ++i) {
 		khash_t(i) *index = idx->index[i];
 		ti_lidx_t *index2 = idx->index2 + i;
-		// write binning index
+		/* write binning index*/
 		size = kh_size(index);
-		if (ti_is_be) { // big endian
+		if (ti_is_be) { /* big endian*/
 			uint32_t x = size;
 			bgzf_write(fp, bam_swap_endian_4p(&x), 4);
 		} else bgzf_write(fp, &size, 4);
 		for (k = kh_begin(index); k != kh_end(index); ++k) {
 			if (kh_exist(index, k)) {
 				ti_binlist_t *p = &kh_value(index, k);
-				if (ti_is_be) { // big endian
+				if (ti_is_be) { /* big endian*/
 					uint32_t x;
 					x = kh_key(index, k); bgzf_write(fp, bam_swap_endian_4p(&x), 4);
 					x = p->n; bgzf_write(fp, bam_swap_endian_4p(&x), 4);
@@ -500,12 +503,12 @@ void ti_index_save(const ti_index_t *idx, BGZF *fp)
 				}
 			}
 		}
-		// write linear index (index2)
+		/* write linear index (index2)*/
 		if (ti_is_be) {
 			int x = index2->n;
 			bgzf_write(fp, bam_swap_endian_4p(&x), 4);
 		} else bgzf_write(fp, &index2->n, 4);
-		if (ti_is_be) { // big endian
+		if (ti_is_be) { /* big endian*/
 			int x;
 			for (x = 0; (int)x < index2->n; ++x)
 				bam_swap_endian_8p(&index2->offset[x]);
@@ -537,7 +540,7 @@ static ti_index_t *ti_index_load_core(BGZF *fp)
 	idx->tname = kh_init(s);
 	idx->index = (khash_t(i)**)calloc(idx->n, sizeof(void*));
 	idx->index2 = (ti_lidx_t*)calloc(idx->n, sizeof(ti_lidx_t));
-	// read idx->conf
+	/* read idx->conf*/
 	bgzf_read(fp, &idx->conf, sizeof(ti_conf_t));
 	if (ti_is_be) {
 		bam_swap_endian_4p(&idx->conf.preset);
@@ -547,7 +550,8 @@ static ti_index_t *ti_index_load_core(BGZF *fp)
 		bam_swap_endian_4p(&idx->conf.meta_char);
 		bam_swap_endian_4p(&idx->conf.line_skip);
 	}
-	{ // read target names
+	{
+		/* read target names*/
 		int j, ret;
 		kstring_t *str;
 		int32_t l;
@@ -574,7 +578,7 @@ static ti_index_t *ti_index_load_core(BGZF *fp)
 		int j, ret;
 		ti_binlist_t *p;
 		index = idx->index[i] = kh_init(i);
-		// load binning index
+		/* load binning index*/
 		bgzf_read(fp, &size, 4);
 		if (ti_is_be) bam_swap_endian_4p(&size);
 		for (j = 0; j < (int)size; ++j) {
@@ -595,7 +599,7 @@ static ti_index_t *ti_index_load_core(BGZF *fp)
 				}
 			}
 		}
-		// load linear index
+		/* load linear index*/
 		bgzf_read(fp, &index2->n, 4);
 		if (ti_is_be) bam_swap_endian_4p(&index2->n);
 		index2->m = index2->n;
@@ -631,7 +635,7 @@ static void download_from_remote(const char *url)
 	l = strlen(url);
 	for (fn = (char*)url + l - 1; fn >= url; --fn)
 		if (*fn == '/') break;
-	++fn; // fn now points to the file name
+	++fn; /* fn now points to the file name*/
 	fp_remote = knet_open(url, "r");
 	if (fp_remote == 0) {
 		PRINT_ERROR( "[download_from_remote] fail to open remote file.\n");
@@ -715,7 +719,7 @@ int ti_index_build2(const char *fn, const ti_conf_t *conf, const char *_fnidx)
 		return -1;
 	}
 	idx = ti_index_core(fp, conf);
-	if( idx == 0 )	return -1;	//@ubw : in order to get rid of exit(1), return(-1) was inserted and this line exchanged place with the bgzf_close-line before
+	if( idx == 0 )	return -1;	/*@ubw : in order to get rid of exit(1), return(-1) was inserted and this line exchanged place with the bgzf_close-line before*/
 	bgzf_close(fp);
 	if (_fnidx == 0) {
 		fnidx = (char*)calloc(strlen(fn) + 5, 1);
@@ -788,7 +792,8 @@ int ti_parse_region(const ti_index_t *idx, const char *str, int *tid, int *begin
  * retrieve a specified region *
  *******************************/
 
-#define MAX_BIN 37450 // =(8^6-1)/7+1
+#define MAX_BIN 37450
+ /* =(8^6-1)/7+1*/
 
 static inline int reg2bins(uint32_t beg, uint32_t end, uint16_t list[MAX_BIN])
 {
@@ -827,12 +832,12 @@ ti_iter_t ti_iter_query(const ti_index_t *idx, int tid, int beg, int end)
 	if (end < beg)
 		return 0;
 	
-	// initialize the iterator
+	/* initialize the iterator*/
 	iter = calloc(1, sizeof(struct __ti_iter_t));
 	iter->idx = idx; iter->tid = tid; iter->beg = beg; iter->end = end; iter->i = -1;
 	
-	// random access
-	//
+	/* random access*/
+	/**/
 	bins = (uint16_t*)calloc(MAX_BIN, 2);
 	n_bins = reg2bins(beg, end, bins);
 	index = idx->index[tid];
@@ -846,7 +851,7 @@ ti_iter_t ti_iter_query(const ti_index_t *idx, int tid, int beg, int end)
 
 		if (min_off == 0)
 		{
-			// improvement for index files built by tabix prior to 0.1.4
+			/* improvement for index files built by tabix prior to 0.1.4*/
 			int n = beg>>TAD_LIDX_SHIFT;
 			if (n > idx->index2[tid].n)
 				n = idx->index2[tid].n;
@@ -858,9 +863,9 @@ ti_iter_t ti_iter_query(const ti_index_t *idx, int tid, int beg, int end)
 		}
 	}
 	else
-		min_off = 0; // tabix 0.1.2 may produce such index files
+		min_off = 0; /* tabix 0.1.2 may produce such index files*/
 
-	//
+	/**/
 	for (i = n_off = 0; i < n_bins; ++i)
 	{
 		if ((k = kh_get(i, index, bins[i])) != kh_end(index))
@@ -889,25 +894,25 @@ ti_iter_t ti_iter_query(const ti_index_t *idx, int tid, int beg, int end)
 		return iter;
 	}
 	
-	//
+	/**/
 	free(bins);
 	
-	//
+	/**/
 	{
 		int l;
 		ks_introsort(offt, n_off, off);
 
-		// resolve completely contained adjacent blocks
+		/* resolve completely contained adjacent blocks*/
 		for (i = 1, l = 0; i < n_off; ++i)
 			if (off[l].v < off[i].v)
 				off[++l] = off[i];
 
 		n_off = l + 1;
 
-		// resolve overlaps between adjacent blocks; this may happen due to the merge in indexing
+		/* resolve overlaps between adjacent blocks; this may happen due to the merge in indexing*/
 		for (i = 1; i < n_off; ++i)
 			if (off[i-1].v >= off[i].u) off[i-1].v = off[i].u;
-		{ // merge adjacent blocks
+		{ /* merge adjacent blocks*/
 			for (i = 1, l = 0; i < n_off; ++i) {
 				if (off[l].v>>16 == off[i].u>>16) off[l].v = off[i].v;
 				else off[++l] = off[i];
@@ -948,44 +953,44 @@ const char *ti_iter_read(BGZF *fp, ti_iter_t iter, int *len)
 		
 		int ret;
 		
-		//	handle any need to look inside a different chunk
-		//
+		/*	handle any need to look inside a different chunk*/
+		/**/
 		if( iter->curr_off == 0 || iter->curr_off >= iter->off[iter->i].v)
 		{
-			// then jump to the next chunk
+			/* then jump to the next chunk*/
 			if (iter->i == iter->n_off - 1)
-				break; // no more chunks
+				break; /* no more chunks*/
 			if( iter->i >= 0 )
-				WHOP_ASSERT(iter->curr_off == iter->off[iter->i].v); // otherwise bug
+				WHOP_ASSERT(iter->curr_off == iter->off[iter->i].v); /* otherwise bug*/
 			if( iter->i < 0 || iter->off[iter->i].v != iter->off[iter->i+1].u )
 			{
-				// not adjacent chunks; then seek
+				/* not adjacent chunks; then seek*/
 				bgzf_seek(fp, iter->off[iter->i+1].u, SEEK_SET);
 				iter->curr_off = bgzf_tell(fp);
 			}
 			++iter->i;
 		}
 		
-		//	read a line and return 
-		//
+		/*	read a line and return */
+		/**/
 		if( (ret = ti_readline(fp, &iter->str)) >= 0 )
 		{
 			ti_intv_t intv;
 
-			iter->curr_off = bgzf_tell(fp);	//update current bgzf-file offset
+			iter->curr_off = bgzf_tell(fp);	/*update current bgzf-file offset*/
 
-			if (iter->str.s[0] == iter->idx->conf.meta_char)	//skip lines beginning with the meta-character specified in the config...
+			if (iter->str.s[0] == iter->idx->conf.meta_char)	/*skip lines beginning with the meta-character specified in the config...*/
 			{
 				continue;
 			}
 
-			get_intv((ti_index_t*)iter->idx, &iter->str, &intv);	//get string and interval
+			get_intv((ti_index_t*)iter->idx, &iter->str, &intv);	/*get string and interval*/
 			
-			if (intv.tid != iter->tid || intv.beg >= iter->end)		//if not correct contigID or begins after iter-end, break the loop
+			if (intv.tid != iter->tid || intv.beg >= iter->end)		/*if not correct contigID or begins after iter-end, break the loop*/
 			{
-				break; // no need to proceed
+				break; /* no need to proceed*/
 			}
-			//
+			/**/
 			else if (intv.end > iter->beg && iter->end > intv.beg)
 			{
 				if (len)
@@ -994,27 +999,27 @@ const char *ti_iter_read(BGZF *fp, ti_iter_t iter, int *len)
 			}
 			else
 			{
-				//intv.beg/end = interval in index file, iter.beg/end = user-set region interval
-				//
+				/*intv.beg/end = interval in index file, iter.beg/end = user-set region interval*/
+				/**/
 				if( intv.beg == intv.end )
 				{
 					Rprintf("(WW) WARNING : intv.beg and intv.end are the same: %d - %d! Your .tbi index file is probably faulty!\n",intv.beg,intv.end);
 				}
-				//NOTE : due to a faulty index-file, this while(1) became an endless loop
-				//	where 
-				//	intv.end,iter->beg,iter->end,intv.beg
-				//	had always the same values
-				//				0		 1		  16050408  0(if i remember correctly)
-				//						 ^-----   ^-------------------- these two represented the selected region
-				//
-				//printf("i: inte %d <= iterb %d || itere %d <= intb %d\n",intv.end,iter->beg,iter->end,intv.beg);
-				//if( max_ignored_lines-- <= 0 )
-				//	break;
+				/*NOTE : due to a faulty index-file, this while(1) became an endless loop*/
+				/*	where */
+				/*	intv.end,iter->beg,iter->end,intv.beg*/
+				/*	had always the same values*/
+				/*				0		 1		  16050408  0(if i remember correctly)*/
+				/*						 ^-----   ^-------------------- these two represented the selected region*/
+				/**/
+				/*printf("i: inte %d <= iterb %d || itere %d <= intb %d\n",intv.end,iter->beg,iter->end,intv.beg);*/
+				/*if( max_ignored_lines-- <= 0 )*/
+				/*	break;*/
 			}
 		}
 		else
-			break; // end of file
-	}//...while( forever )
+			break; /* end of file*/
+	}/*...while( forever )*/
 
 	iter->finished = 1;
 	return 0;
@@ -1074,10 +1079,10 @@ void ti_close(tabix_t *t)
 
 int ti_lazy_index_load(tabix_t *t)
 {
-	if (t->idx == 0) { // load index
+	if (t->idx == 0) { /* load index*/
 		if (t->fnidx) t->idx = ti_index_load_local(t->fnidx);
 		else t->idx = ti_index_load(t->fn);
-		if (t->idx == 0) return -1; // fail to load index
+		if (t->idx == 0) return -1; /* fail to load index*/
 	}
 	return 0;
 }
@@ -1104,7 +1109,7 @@ ti_iter_t ti_query(tabix_t *t, const char *name, int beg, int end)
 	if (name == 0)
 		return ti_iter_first();
 
-	// then need to load the index
+	/* then need to load the index*/
 	if( ti_lazy_index_load(t) != 0 )
 		return 0;
 

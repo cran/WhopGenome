@@ -63,7 +63,7 @@ struct tbi_file {
 //*
 //*			DATA
 //*
-
+/*
 	//
 tabix_t				*t=0;
 struct timeval		tv1,
@@ -78,8 +78,8 @@ ti_iter_t			it;				//iterator to parse the chromosome-regions of interest
 
 	//
 vector<string>		indnames;
-
-
+TODO:DELETE THIS
+*/
 
 //*
 //*			EXTERNS
@@ -173,9 +173,9 @@ vcff::~vcff()
 bool			vcff::testfunc( void )
 {
 	//
-	int numnames=getNumSequenceNames();
+	unsigned int numnames=getNumSequenceNames();
 	Rprintf("got %d seqnames!\n",numnames);
-	for( int i=0; i < numnames; i++ )
+	for( unsigned int i=0; i < numnames; i++ )
 	{
 		Rprintf("SeqName#%d='%s'\n",i,getSequenceName(i));
 	}
@@ -220,20 +220,20 @@ bool			vcff::open( const char * filename )
 	char	version_major = 0,
 			version_minor = 0
 				;
-	unsigned int	i = 17
+	unsigned long	p = 17
 				;
-	while( hdrline0[i] >= '0' && hdrline0[i] <= '9' )
+	while( hdrline0[p] >= '0' && hdrline0[p] <= '9' )
 	{
-		version_major = version_major*10 + (hdrline0[i]-'0');
-		i++;
+		version_major = version_major*10 + (hdrline0[p]-'0');
+		p++;
 	}
-	if( hdrline0[i] == '.' )
+	if( hdrline0[p] == '.' )
 	{
-		i++;
-		while( hdrline0[i] >= '0' && hdrline0[i] <= '9' )
+		p++;
+		while( hdrline0[p] >= '0' && hdrline0[p] <= '9' )
 		{
-			version_minor = version_minor*10 + (hdrline0[i]-'0');
-			i++;
+			version_minor = version_minor*10 + (hdrline0[p]-'0');
+			p++;
 		}
 	}
 	Rprintf("(II) VCF version is %d.%d\n",version_major,version_minor);
@@ -257,6 +257,7 @@ bool			vcff::open( const char * filename )
 		class VcfParseSampleNames : public ParseFunctor {
 		public:
 			VcfParseSampleNames() : fmtline(0){}
+			virtual ~VcfParseSampleNames(){}
 			bool operator()(const char*s,int l)
 			{
 				if( (s==0) || (l<10) )

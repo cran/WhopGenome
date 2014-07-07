@@ -240,7 +240,6 @@ bool	determineAlignmentDimensionsMAF( unsigned int &numnucleotides, unsigned int
 	
 	//
 	ONDBG Rprintf("MAF File containing %d distinct sequences; total alignment length = %d\n",numsamples,numnucleotides);
-	numsamples=numsamples;
 	
 	//
 	return true;
@@ -493,7 +492,7 @@ SEXP	processAlignmentMAF( void )
 	
 		//
 		//
-		c = (int)nucleotide_mapping['-'];
+		c = (int)nucleotide_mapping[(unsigned char)'-'];
 		for( unsigned int ii=0; ii < numsamples; ii++)
 		{
 			if( usedsequences[ii] != usedsequenceid )

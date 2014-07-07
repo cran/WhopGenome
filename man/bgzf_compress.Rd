@@ -21,6 +21,20 @@ file under the name given by <outfilename>.
 \value{
 TRUE if call succeeds, FALSE if it fails).
 }
+%XXXXXXXXXXXXXXX
+\examples{
+
+##
+##	Example :
+##
+gfffile  <- system.file("data", "ex.gff3", package = "WhopGenome" )
+gffgzfile <- paste( sep="", gfffile, ".gz" )
+file.remove( gffgzfile )
+bgzf_compress( gfffile , gffgzfile )
+file.exists( gffgzfile )
+
+}
+%XXXXXXXXXXXXXXX
 \author{
 Ulrich Wittelsbuerger
 }

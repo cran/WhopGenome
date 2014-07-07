@@ -26,6 +26,10 @@ Initially, before a region has been set by the user, the returned string is ":0-
 NULL if vcffh is not a valid VCF filehandle as returned by vcf_open.
 Otherwise, a region string.
 }
+\examples{
+	vcffile <- vcf_open( system.file( "extdata", "ex.vcf.gz" , package="WhopGenome") )
+	vcf_getregion( vcffile )
+}
 \author{
 Ulrich Wittelsbuerger
 }

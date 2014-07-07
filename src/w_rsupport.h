@@ -337,16 +337,17 @@ protected:
 //*
 
 
-
+#if 0
 void	setListElement(SEXP list, char *str, SEXP value);
 SEXP	getListElement(SEXP list, const char *str);
 SEXP	getvar(SEXP name, SEXP rho);
 SEXP	createList( SEXP r );
+#endif
 
 	//
 	//
 void*			R_GetExtPtr( SEXP var , const char* expectedname );
-const char*	R_GetExtPtrTag( SEXP var );
+const char*		R_GetExtPtrTag( SEXP var );
 
 	//	data.frame
 	//

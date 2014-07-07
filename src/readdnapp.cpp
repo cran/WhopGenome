@@ -260,7 +260,7 @@ public:
 		{
 
 			// determine the maximum number of bytes we can copy
-			int numbytescopyable = numbytes>(blocksize-currentblockindex) ? (blocksize-currentblockindex) : numbytes;
+			int numbytescopyable = ((unsigned)numbytes)>(blocksize-currentblockindex) ? (blocksize-currentblockindex) : numbytes;
 			
 			//
 			memcpy(currentblockpointer,p, numbytescopyable);
@@ -342,13 +342,13 @@ static	unsigned int		blkidx=0,
 	//
 unsigned int __readdnapp_internal_maxblockloadsize = ( 100 * 1024 *1024 );
 
-
+extern	char	nucleotide_mapping[];
 /*
 
 		ids <- c("T" ,"t",	"U","u",	"C","c",	"G","g",	"A","a",	"N","n","?",	"-")
 		nuks <- c(1,1,		1,1,		2,2,    	3,3,		4,4,    	 5,5,5,			6)
 */
-
+/*
 //!	For quick mapping of nucleotide character codes into numeric constants for the biallelic matrix
 static char	nucleotide_mapping[] = {
 	5,5,5,5,	5,5,5,5,	5,5,5,5,	5,5,5,5,				// 5	: - mostly nonprintable - 
@@ -369,7 +369,7 @@ static char	nucleotide_mapping[] = {
 	5,5,5,5,	5,5,5,5,	5,5,5,5,	5,5,5,5,				// 224	: - mostly nonprintable - 
 	5,5,5,5,	5,5,5,5,	5,5,5,5,	5,5,5,5					// 240	: - mostly nonprintable - 
 };
-
+*/
 static char	is_iupac_nucleotide[] = {
 	0,0,0,0,	0,0,0,0,	0,0,0,0,	0,0,0,0,				// 5	: - mostly nonprintable - 
 	0,0,0,0,	0,0,0,0,	0,0,0,0,	0,0,0,0,				// 16	: - mostly nonprintable - 

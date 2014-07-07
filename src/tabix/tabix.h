@@ -54,7 +54,7 @@ typedef struct {
 
 typedef struct {
 	int32_t preset;
-	int32_t sc, bc, ec; // seq col., beg col. and end col.
+	int32_t sc, bc, ec; /* seq col., beg col. and end col. */
 	int32_t meta_char, line_skip;
 } ti_conf_t;
 
@@ -63,7 +63,7 @@ typedef struct {
 	char *ss, *se;
 } ti_interval_t;
 
-extern ti_conf_t ti_conf_gff, ti_conf_bed, ti_conf_psltbl, ti_conf_vcf, ti_conf_sam; // preset
+extern ti_conf_t ti_conf_gff, ti_conf_bed, ti_conf_psltbl, ti_conf_vcf, ti_conf_sam; /* preset */
 
 #ifdef __cplusplus
 extern "C" {

@@ -24,6 +24,12 @@ Returns TRUE if the index could be created or FALSE if not.
 \author{
 Ulrich Wittelsbuerger
 }
+\examples{
+	##
+	##	Example:
+	##
+}
 \seealso{
-tabix_build, bgzf_compress
+\code{\link{tabix_build}}
+\code{\link{bgzf_compress}}
 }
