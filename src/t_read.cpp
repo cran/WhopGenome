@@ -116,7 +116,7 @@ bool			whop_tabix::parseNextLine( void )
 
 	//	count number of fields
 	//
-	unsigned int numfields = 0 ;
+	unsigned int numfields = 1 ;
 	unsigned int strpos = 0;
 	for( int tmplen = current_line_len ; current_line[strpos] != 0 && tmplen > 0; strpos++, tmplen-- )
 	{
@@ -205,15 +205,30 @@ bool			whop_tabix::parseNextLine( void )
 bool			whop_tabix::copyField( unsigned int fieldidx, char*buffer, unsigned int maxbuflen )
 {
 	if( current_line == 0 )
+	{
+		df0("cl=0\n");
 		return false;
+	}
 	if( field_offsets == 0 )
+	{
+		df0("fo=0\n");
 		return false;
+	}
 	if( fieldidx >= last_num_fields )
+	{
+		df0("fi (%d)>=last (%d)\n",fieldidx,last_num_fields);
 		return false;
+	}
 	if( buffer == 0 )
+	{
+		df0("buf=0\n");
 		return false;
+	}
 	if( maxbuflen < 1 )
+	{
+		df0("mbl<1\n");
 		return false;
+	}
 
 	//
 	int fldoffs = field_offsets[ fieldidx ];
@@ -226,7 +241,7 @@ bool			whop_tabix::copyField( unsigned int fieldidx, char*buffer, unsigned int m
 		buffer[i] = str[i];
 	}
 	buffer[i]=0;
-		
+
 	return true;
 }
 

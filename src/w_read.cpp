@@ -515,18 +515,28 @@ EXPORT	SEXP	VCF_getSample( SEXP vcfptr, SEXP stridx )
 	//	make sure sample index is an integer
 	//
 	if( RNumeric::isInt( stridx ) == false )
+	{
+		df0("(!!) VCF_getSample : second parameter (stridx) not an integer! Use as.integer()!\n");
+		Rprintf("A");
 		return R_NilValue;
+	}
 	
 	//	get as int and make sure its inside the valid range
 	//
 	int stridxint = RNumeric::getInt( stridx );
 	if( stridxint < 0 )
+	{
+		df0("(!!) VCF_getSample : second parameter < 0!\n");
 		return R_NilValue;
+	}
 	stridxint += f->getFirstSampleFieldIndex();
 	
 	//
 	if( f->getNumFields() < (unsigned)stridxint )
+	{
+		df0("(!!) VCF_getSample : not enough fields in VCF line (%d fields available, field %d requested)!",f->getNumFields(),stridxint);
 		return R_NilValue;
+	}
 	
 	//	get a copy of the field, turn it into an R string and return it
 	//
@@ -540,6 +550,7 @@ EXPORT	SEXP	VCF_getSample( SEXP vcfptr, SEXP stridx )
 	}
 	
 	//
+	df0("(!!) VCF_getSample : cannot copy field!");
 	return R_NilValue;
 }
 

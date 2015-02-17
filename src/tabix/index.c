@@ -368,7 +368,7 @@ ti_index_t *ti_index_core(BGZF *fp, const ti_conf_t *conf)
             if (last_tid>intv.tid )
             {
                 PRINT_ERROR( "[ti_index_core] the chromosome blocks not continuous at line %" PRIu64 ", is the file sorted? [pos %d]\n",lineno,intv.beg+1);	/*@ ubw : changed to use " PRIu64 " in place of %d/%ld/%I64d
-                return(0);/*exit(1);*/
+                return(0);*//*exit(1);*/
             }
 			last_tid = intv.tid;
 			last_bin = 0xffffffffu;

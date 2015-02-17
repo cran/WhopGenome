@@ -28,18 +28,21 @@ Ulrich Wittelsbuerger
 \examples{
 
 ##
-##	Example :
+##	Example : (NOT RUN)
 ##
 
 print("Opening and reading")
 gffgzfile  <- system.file("extdata", "ex.gff3.gz", package = "WhopGenome" )
-gffgzfile
-gffh <- tabix_open( gffgzfile )
-gffh
-stopifnot( gffh != NULL )
-tabix_read( gffh )
-tabix_close( gffh )
-gffh
+if( file.exists(gffgzfile) )
+{
+ gffgzfile
+ gffh <- tabix_open( gffgzfile )
+ gffh
+ stopifnot( gffh != NULL )
+ tabix_read( gffh )
+ tabix_close( gffh )
+ gffh
+}
 }
 \seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
