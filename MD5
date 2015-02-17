@@ -1,4 +1,4 @@
-7f2675daf21b2d23f2dd467a52b0018b *DESCRIPTION
+c4ab612ddb704f5931635685d9676140 *DESCRIPTION
 129c57b7a0c7443437eac8065dc3a9c1 *NAMESPACE
 0cf1f2721406ae874dc221ea069b17dc *R/ZZZ_whopgenome.R
 2bec69cce5e5ec056cc85349c0787a5d *R/bgzf.R
@@ -14,6 +14,7 @@ cf580ce699e56cfac0f02773c358085e *R/x_eg_db.R
 928d1f109fda6060680df4572fa106b1 *R/x_go.R
 9bb3ef51e392d0cf4aee60d2b4dbe846 *R/x_pedigree.R
 740d4bbfc8f1693ba56f1bfe94cb804e *R/x_ucsc.R
+290d7b00b8b9924f468b693e3133b9db *inst/CITATION
 f1ee62347d9ec008bc135b6199159bbb *inst/COPYRIGHTS
 939644972262ea7ac169966dec22e125 *inst/extdata/ex.fasta
 b8846c39b7e347828ed8e4c876e62e4e *inst/extdata/ex.fasta.fai
@@ -145,8 +146,8 @@ eecbc369746d7cbb5b0b503ebffee848 *man/whop.ped.sonsOf.Rd
 a4670f0c09e4cb3bb8afa3a26ac33ce4 *man/whop.ucsc.geneInfoSimilar.Rd
 f712de0d5395ee1a41955d138b9eba68 *man/whop.ucsc.genesForRegion.Rd
 51619930e4261cee0fde3874de6bbfd3 *man/whop.ucsc.query.Rd
-9855239b666e6c0c0ae6b056f9df7ebb *src/Makevars
-5718dd6ecf101e3a3a416162480198d5 *src/Makevars.win
+550716014388311129fba260deceb280 *src/Makevars
+e00ba3e284a28eda4338ad093c07a315 *src/Makevars.win
 e2053958a8c2ce7545c49d7e2cb70fc7 *src/dummy.cc
 73baebef6d6ffc576fd8be184c579943 *src/dynstorage.h
 165e481f623640f03c2606a0672a4b52 *src/faidx_ifc.cpp
