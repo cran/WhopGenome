@@ -4,6 +4,9 @@
 #
 useDynLib(WhopGenome)
 
+#
+#
+importFrom("utils", "read.delim", "write.table")
 
 #
 #	Tabix

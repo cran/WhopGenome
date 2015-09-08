@@ -1,5 +1,5 @@
-c4ab612ddb704f5931635685d9676140 *DESCRIPTION
-129c57b7a0c7443437eac8065dc3a9c1 *NAMESPACE
+3327f31d5bf00d899fbfec4cf69d7047 *DESCRIPTION
+7d7ca429d88f0ccfd3c64b68c9627607 *NAMESPACE
 0cf1f2721406ae874dc221ea069b17dc *R/ZZZ_whopgenome.R
 2bec69cce5e5ec056cc85349c0787a5d *R/bgzf.R
 275cf4e268943ebc9eeb3496c44e72af *R/fai.R
@@ -146,7 +146,7 @@ eecbc369746d7cbb5b0b503ebffee848 *man/whop.ped.sonsOf.Rd
 a4670f0c09e4cb3bb8afa3a26ac33ce4 *man/whop.ucsc.geneInfoSimilar.Rd
 f712de0d5395ee1a41955d138b9eba68 *man/whop.ucsc.genesForRegion.Rd
 51619930e4261cee0fde3874de6bbfd3 *man/whop.ucsc.query.Rd
-550716014388311129fba260deceb280 *src/Makevars
+52c84bec5ab027d2941a1ba28d8516b9 *src/Makevars
 e00ba3e284a28eda4338ad093c07a315 *src/Makevars.win
 e2053958a8c2ce7545c49d7e2cb70fc7 *src/dummy.cc
 73baebef6d6ffc576fd8be184c579943 *src/dynstorage.h
@@ -176,7 +176,7 @@ aba13a3883d7d117af33a6d8fe8c1ed1 *src/tabix/bam_endian.h
 26d4b4b49e983b0c601887bc1fa7f386 *src/tabix/ksort.h
 d54a71ce0dcd277bfca2965d029e4318 *src/tabix/kstring.c
 0eac32480c79f6ad7ffc60066a14a09f *src/tabix/kstring.h
-4ec80c92be731add34942e19f7dc1aad *src/tabix/razf.c
+0a66f5884d9b164d54a3dd2cea85cdb1 *src/tabix/razf.c
 ee59537b0051846e9ac4d12f4c8927f3 *src/tabix/razf.h
 7a797578851ec2fc61850811ed6790bf *src/tabix/tabix.h
 ba5d5ae1dd2a1e9ae874a72f3da3aabe *src/w_codemat.cpp
