@@ -29,6 +29,8 @@ export(fai_open)
 export(fai_close)
 export(fai_reopen)
 export(fai_build)
+export(fai_query2)
+export(fai_query4)
 export(fai_query3)
 export(fai_query5)
 

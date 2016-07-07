@@ -273,8 +273,8 @@ EXPORT  SEXP    VCF_getSampleByName( SEXP vcfptr, SEXP str_samplename );
 
 	//	Reading
 	//
-EXPORT	SEXP	VCF_readLineRaw( SEXP vcfptr, SEXP str );
-EXPORT	SEXP	VCF_readLineRawFiltered( SEXP vcfptr, SEXP str );
+EXPORT	SEXP	VCF_readLineRaw( SEXP vcfptr , SEXP str );
+EXPORT	SEXP	VCF_readLineRawFiltered( SEXP vcfptr , SEXP str );
 EXPORT	SEXP	VCF_readLineTSV( SEXP vcfptr );
 EXPORT	SEXP	VCF_readLineTSVFiltered( SEXP vcfptr );
 #if 0
@@ -371,8 +371,8 @@ EXPORT  SEXP	tabix_build( SEXP filename_sexp, SEXP sc_sexp, SEXP bc_sexp, SEXP e
 
 	//		FaIdx
 	//
-EXPORT	SEXP	FAI_query5( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end, SEXP resstr );
-EXPORT	SEXP	FAI_query3( SEXP faiptr, SEXP regionstr, SEXP resstr );
+EXPORT	SEXP	FAI_query4( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end );
+EXPORT	SEXP	FAI_query2( SEXP faiptr, SEXP regionstr );
 EXPORT	SEXP	FAI_build( SEXP filename );
 EXPORT	SEXP	FAI_open( SEXP filename );
 EXPORT	SEXP	FAI_close( SEXP faiptr );

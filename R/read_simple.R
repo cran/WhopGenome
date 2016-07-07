@@ -5,7 +5,6 @@
 ###
 ###
 
-
 #
 #	returns a data-frame where the rownames are the field names of the VCF
 #
@@ -23,8 +22,13 @@ vcf_readLineVecFiltered <- function( vcffh )	.Call("VCF_readLineTSVFiltered",vcf
 #
 #	reads a line and stores in 'str'
 #
-vcf_readLineRaw <- function( vcffh, stri )	.Call("VCF_readLineRaw",vcffh,stri, PACKAGE="WhopGenome")
-vcf_readLineRawFiltered <- function( vcffh, stri )	.Call("VCF_readLineRawFiltered",vcffh,stri,PACKAGE="WhopGenome")
+	#	unfiltered
+	#
+vcf_readLineRaw <- function( vcffh , res=NA )	.Call("VCF_readLineRaw",vcffh, res, PACKAGE="WhopGenome")
+
+	#	filtered
+	#
+vcf_readLineRawFiltered <- function( vcffh , res=NA )	.Call("VCF_readLineRawFiltered",vcffh, res, PACKAGE="WhopGenome")
 
 #
 #

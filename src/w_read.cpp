@@ -558,6 +558,23 @@ EXPORT	SEXP	VCF_getSample( SEXP vcfptr, SEXP stridx )
 
 
 
+
+
+			//*
+			//*
+			//*
+			//*				readLineRaw		&		readLineRawFiltered
+			//*
+			//*
+			//*
+			//*
+			//*
+			//*
+
+
+
+
+
 /*!	
 **
 **
@@ -572,11 +589,33 @@ EXPORT SEXP VCF_readLineRaw( SEXP vcfptr, SEXP str )
 		return RBool::False();
 	}
 
+	//	OLD, DEPRECATED VARIANT : modifies R's internal constant pool and can cause issues 
+	if( RString::isStr(str) )
+	{
+		static bool warnedalready = false;
+		if( ! warnedalready ){
+			Rprintf("(WW) Warning : using the 2-argument-verison vcf_readLineRaw( vcffh , string ) is deprecated! Please see ?vcf_readLineRaw !\n");
+			warnedalready = true;
+		}
+
+		const char * s = f->readNextLine();
+		if( s != 0 )
+		{
+			SET_STRING_ELT( str, 0, mkChar(s) );
+			return RBool::True();
+		}
+		
+		//
+		return RBool::False();
+	
+	}
+
+	//	NEW, HARMLESS VARIANT
 	const char * s = f->readNextLine();
 	if( s != 0 )
 	{
-		SET_STRING_ELT( str, 0, mkChar(s) );
-		return RBool::True();
+		RString res( s );
+		return res.get();
 	}
 	
 	//
@@ -619,12 +658,30 @@ EXPORT SEXP VCF_readLineRawFiltered( SEXP vcfptr, SEXP str )
 		const char * s = f->getCurrentLine();
 		if( s != 0 )
 		{
-			SET_STRING_ELT( str, 0, mkChar(s) );
-			return RBool::True();
-		}
-		else
-			return RBool::False();
 			
+			//	OLD, DEPRECATED VARIANT : modifies R's internal constant pool and can cause issues 
+			if( RString::isStr(str) )
+			{
+				static bool warnedalready = false;
+				if( ! warnedalready ){
+					Rprintf("(WW) Warning : using the 2-argument-verison vcf_readLineRaw( vcffh , string ) is deprecated! Please see ?vcf_readLineRaw !\n");
+					warnedalready = true;
+				}
+
+				SET_STRING_ELT( str, 0, mkChar(s) );
+				return RBool::True();
+			}
+			else
+			{
+				RString res( s );
+				return res.get();
+			}// ... if( using 2-argument version )
+
+		}
+		else // ... if s != 0
+		{
+			return RBool::False();
+		}	
 	
 	}//...while
 
@@ -632,15 +689,6 @@ EXPORT SEXP VCF_readLineRawFiltered( SEXP vcfptr, SEXP str )
 	//
 	return RBool::False();
 }
-
-
-
-
-
-
-
-
-
 
 
 

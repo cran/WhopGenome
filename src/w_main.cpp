@@ -799,8 +799,8 @@ R_CallMethodDef callMethods[]  = {
 	
 	//	FaIdx
 	//
-	{"FAI_query5" , (DL_FUNC) & FAI_query5 , 5 },		//FAI_query5( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end, SEXP resstr )
-	{"FAI_query3" , (DL_FUNC) & FAI_query3 , 3 },		//FAI_query3( SEXP faiptr, SEXP regionstr, SEXP resstr )
+	{"FAI_query4" , (DL_FUNC) & FAI_query4 , 5 },		//FAI_query5( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end )
+	{"FAI_query2" , (DL_FUNC) & FAI_query2 , 3 },		//FAI_query3( SEXP faiptr, SEXP regionstr )
 	{"FAI_build" , (DL_FUNC) & FAI_build , 1 },		//FAI_build( SEXP filename )
 	{"FAI_open" , (DL_FUNC) & FAI_open , 1 },		//FAI_open( SEXP filename )
 	{"FAI_close" , (DL_FUNC) & FAI_close , 1 },		//FAI_close( SEXP faiptr )
@@ -906,8 +906,8 @@ R_CallMethodDef callMethods[]  = {
 	
 	//	Line readers
 	//
-	{"VCF_readLineRaw" , (DL_FUNC) & VCF_readLineRaw , 2 },					//VCF_readLineRaw( SEXP vcfptr, SEXP str )
-	{"VCF_readLineRawFiltered" , (DL_FUNC) & VCF_readLineRawFiltered , 2 },	//VCF_readLineRawFiltered( SEXP vcfptr, SEXP str )
+	{"VCF_readLineRaw" , (DL_FUNC) & VCF_readLineRaw , 1 },					//VCF_readLineRaw( SEXP vcfptr )
+	{"VCF_readLineRawFiltered" , (DL_FUNC) & VCF_readLineRawFiltered , 1 },	//VCF_readLineRawFiltered( SEXP vcfptr )
 	{"VCF_readLineTSV" , (DL_FUNC) & VCF_readLineTSV , 1 },					//VCF_readLineTSV( SEXP vcfptr )
 	{"VCF_readLineTSVFiltered" , (DL_FUNC) & VCF_readLineTSVFiltered , 1 },	//VCF_readLineTSVFiltered( SEXP vcfptr )
 #if 0

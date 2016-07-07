@@ -202,27 +202,20 @@ static void fai_finalize(SEXP extPtr)
 **
 **
 */
-EXPORT SEXP	FAI_query5( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end, SEXP resstr )
+EXPORT SEXP	FAI_query4( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end )
 {
 	//
 	faifile * f = (faifile*)R_GetExtPtr( faiptr , "FAIhandle" );
 	if( 0 == f )
 	{
-		df0("FAI_query : parameter 1 is not a FAIhandle or nil!\n");
+		df0("FAI_query4 : parameter 1 is not a FAIhandle or nil!\n");
 		return RBool::False();
 	}
 
 	//
 	if( false == RString::isStr( seqn ) )
 	{
-		Rprintf("FAI_query : argument 2, 'seqname', is not a string!\n");
-		return RBool::False();
-	}
-
-	//
-	if( false == RString::isStr( resstr ) )
-	{
-		Rprintf("FAI_query : argument 5, 'resultstring', is not a string!\n");
+		Rprintf("FAI_query4 : argument 2, 'seqname', is not a string!\n");
 		return RBool::False();
 	}
 
@@ -243,16 +236,16 @@ EXPORT SEXP	FAI_query5( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end, SEXP resstr 
 	if( 0 == fastaseq )
 	{
 		//ONDBG Rprintf("FAI_query : no result\n");
-		SET_STRING_ELT( resstr, 0, mkChar("") );
+		//SET_STRING_ELT( resstr, 0, mkChar("") );
 		return RBool::False();
 	}
 	
 	//
-	SET_STRING_ELT( resstr, 0, mkChar(fastaseq) );
+	RString res(fastaseq);
 	free( fastaseq );
 
 	//
-	return RBool::True();
+	return res.get();//RBool::True();
 }
 
 
@@ -263,27 +256,20 @@ EXPORT SEXP	FAI_query5( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end, SEXP resstr 
 **
 **
 */
-EXPORT SEXP	FAI_query3( SEXP faiptr, SEXP regionstr, SEXP resstr )
+EXPORT SEXP	FAI_query2( SEXP faiptr, SEXP regionstr )
 {
 	//
 	faifile * f = (faifile*)R_GetExtPtr( faiptr , "FAIhandle" );
 	if( 0 == f )
 	{
-		df0("FAI_query : parameter 1 is not a FAIhandle or nil!\n");
+		df0("FAI_query2 : parameter 1 is not a FAIhandle or nil!\n");
 		return RBool::False();
 	}
 
 	//
 	if( false == RString::isStr( regionstr ) )
 	{
-		Rprintf("FAI_query : argument 2, 'regionstr', is not a string!\n");
-		return RBool::False();
-	}
-
-	//
-	if( false == RString::isStr( resstr ) )
-	{
-		Rprintf("FAI_query : argument 5, 'resultstring', is not a string!\n");
+		Rprintf("FAI_query2 : argument 2, 'regionstr', is not a string!\n");
 		return RBool::False();
 	}
 
@@ -297,15 +283,21 @@ EXPORT SEXP	FAI_query3( SEXP faiptr, SEXP regionstr, SEXP resstr )
 	if( 0 == fastaseq )
 	{
 		//ONDBG Rprintf("FAI_query : no result\n");
-		SET_STRING_ELT( resstr, 0, mkChar("") );
+		//SET_STRING_ELT( resstr, 0, mkChar("") );
 		return RBool::False();
 	}
 	
 	//
-	SET_STRING_ELT( resstr, 0, mkChar(fastaseq) );
+	
+	//
+	RString res(fastaseq);
+	free( (void*)fastaseq );
 
 	//
-	return RBool::True();
+	return res.get();
+	
+	//SET_STRING_ELT( resstr, 0, mkChar(fastaseq) );
+	//return RBool::True();
 }
 
 
@@ -491,128 +483,114 @@ EXPORT SEXP	FAI_reopen( SEXP faiptr )
 }
 
 
-//---------------------------------------------------------
+//---------------------------------------------------------			DEPRECATED:
 
 
-
-
-#if 0
-
-        /*!
-          @abstract   Build index for a FASTA or razip compressed FASTA file.
-          @param  fn  FASTA file name
-          @return     0 on success; or -1 on failure
-          @discussion File "fn.fai" will be generated.
-         */
-       int fai_build(const char *fn);
-
-        /*!
-          @abstract    Distroy a faidx_t struct.
-          @param  fai  Pointer to the struct to be destroyed
-         */
-        void fai_destroy(faidx_t *fai);
-
-        /*!
-          @abstract   Load index from "fn.fai".
-          @param  fn  File name of the FASTA file
-         */
-        faidx_t *fai_load(const char *fn);
-
-        /*!
-          @abstract    Fetch the sequence in a region.
-          @param  fai  Pointer to the faidx_t struct
-          @param  reg  Region in the format "chr2:20,000-30,000"
-          @param  len  Length of the region
-          @return      Pointer to the sequence; null on failure
-
-          @discussion The returned sequence is allocated by malloc family
-          and should be destroyed by end users by calling free() on it.
-         */
-        char *fai_fetch(const faidx_t *fai, const char *reg, int *len);
-
-        /*!
-          @abstract        Fetch the number of sequences. 
-          @param  fai  Pointer to the faidx_t struct
-          @return          The number of sequences
-         */
-        int faidx_fetch_nseq(const faidx_t *fai);
-
-        /*!
-          @abstract    Fetch the sequence in a region.
-          @param  fai  Pointer to the faidx_t struct
-          @param  c_name Region name
-          @param  p_beg_i  Beginning position number (zero-based)
-          @param  p_end_i  End position number (zero-based)
-          @param  len  Length of the region
-          @return      Pointer to the sequence; null on failure
-
-          @discussion The returned sequence is allocated by malloc family
-          and should be destroyed by end users by calling free() on it.
-         */
-        char *faidx_fetch_seq(const faidx_t *fai, char *c_name, int p_beg_i, int p_end_i, int *len);
-        
-
-
-/*!
-**
+/*!	
 **
 **
 */
-EXPORT SEXP faidx_test( SEXP fname, SEXP reg )
+EXPORT SEXP	FAI_query5( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end, SEXP resstr )
 {
-	char		*filename;
-					
-	
-	SEXP		ans = R_NilValue;
-	SEXP		currentfilename
-					;
+	//
+	faifile * f = (faifile*)R_GetExtPtr( faiptr , "FAIhandle" );
+	if( 0 == f )
+	{
+		df0("FAI_query5 : parameter 1 is not a FAIhandle or nil!\n");
+		return RBool::False();
+	}
 
 	//
-	currentfilename = STRING_ELT(fname,0);
-	filename = (char*)CHAR(currentfilename);
-	
-	//
-	int r = fai_build(filename);
-	if( r < 0 )
+	if( false == RString::isStr( seqn ) )
 	{
-		Rprintf("(!!) failed to build fasta index for (%s)!\n",filename);
-		return R_NilValue;
+		Rprintf("FAI_query5 : argument 2, 'seqname', is not a string!\n");
+		return RBool::False();
+	}
+
+	//
+	if( false == RString::isStr( resstr ) )
+	{
+		Rprintf("FAI_query5 : argument 5, 'resstr', is not a string!\n");
+		return RBool::False();
+	}
+
+	//
+	//
+	const char* seqnam = RString::get(seqn);
+	int frompos = RNumeric::getInt(beg);
+	int topos = RNumeric::getInt(end);
+	if( frompos <= 0 || topos <= 0 )
+	{
+		Rprintf("FAI_query : unexpected values for parameters 3, start(%d), and 4, end(%d)\n",frompos,topos);
+		return RBool::False();
 	}
 	
 	//
-/*
-*/
-    faidx_t *fi = fai_load(filename);
-	if( fi == 0 )
+	int seqlen = 0;
+	char * fastaseq = faidx_fetch_seq(f->faidx, (char*)seqnam, frompos, topos, &seqlen);
+	if( 0 == fastaseq )
 	{
-		Rprintf("(!!) failed to load indexed fasta file (%s)\n",filename);
-		return R_NilValue;
+		//ONDBG Rprintf("FAI_query : no result\n");
+		SET_STRING_ELT( resstr, 0, mkChar("") );
+		return RBool::False();
 	}
 	
 	//
-	int numseqs = faidx_fetch_nseq(fi);
-	Rprintf("(ii) %d sequences\n",numseqs);
-	
+	SET_STRING_ELT( resstr, 0, mkChar(fastaseq) );
+	free( fastaseq );
+
 	//
-	const char * regstr  = CHAR( STRING_ELT(reg,0) );
-	int seqlen=0;
-	char *seqstr = fai_fetch(fi, regstr,&seqlen);
-	Rprintf("(ii) length of seq = %d\n",seqlen);
-	if( seqlen )
-	{
-		Rprintf("(ii) Seq = '%s'!\n",seqstr?seqstr:"<Null Result!>");
-		
-		if( seqstr )
-		{
-			free( seqstr );
-		}
-	}
-	
-	
-	//
-	fai_destroy( fi );
-	
-	//
-	return R_NilValue;
+	return RBool::True();
 }
-#endif
+
+
+
+
+
+/*!	
+**
+**
+*/
+EXPORT SEXP	FAI_query3( SEXP faiptr, SEXP regionstr, SEXP resstr )
+{
+	//
+	faifile * f = (faifile*)R_GetExtPtr( faiptr , "FAIhandle" );
+	if( 0 == f )
+	{
+		df0("FAI_query3 : parameter 1 is not a FAIhandle or nil!\n");
+		return RBool::False();
+	}
+
+	//
+	if( false == RString::isStr( regionstr ) )
+	{
+		Rprintf("FAI_query3 : argument 2, 'regionstr', is not a string!\n");
+		return RBool::False();
+	}
+
+	//
+	if( false == RString::isStr( resstr ) )
+	{
+		Rprintf("FAI_query3 : argument 3, 'resstr', is not a string!\n");
+		return RBool::False();
+	}
+
+	//
+	//
+	const char* regstr = RString::get(regionstr);
+	
+	//
+	int seqlen = 0;
+	const char * fastaseq = fai_fetch(f->faidx, (char*)regstr, &seqlen);
+	if( 0 == fastaseq )
+	{
+		//ONDBG Rprintf("FAI_query : no result\n");
+		SET_STRING_ELT( resstr, 0, mkChar("") );
+		return RBool::False();
+	}
+	
+	//
+	SET_STRING_ELT( resstr, 0, mkChar(fastaseq) );
+	free( (void*)fastaseq );	
+	return RBool::True();
+}

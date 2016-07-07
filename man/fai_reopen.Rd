@@ -28,13 +28,11 @@ Ulrich Wittelsbuerger
 	faifile  <- system.file("extdata", "ex.fasta", package = "WhopGenome")
 	faifh <- fai_open( faifile )
 	stopifnot( faifh != NULL )
-	result <- ""
-	fai_query5( faifh , "1", 100 , 200, result )
+	result <- fai_query4( faifh , "1", 100 , 200 )
 	print( result )
 	fai_close( faifh )
 	fai_reopen( faifh )
-	result <- ""
-	fai_query5( faifh , "1", 100 , 110, result )
+	result <- fai_query4( faifh , "1", 100 , 110 )
 	print( result )
 }
 \seealso{
