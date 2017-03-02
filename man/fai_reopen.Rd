@@ -27,7 +27,7 @@ Ulrich Wittelsbuerger
 	##
 	faifile  <- system.file("extdata", "ex.fasta", package = "WhopGenome")
 	faifh <- fai_open( faifile )
-	stopifnot( faifh != NULL )
+	stopifnot( !is.null(faifh) )
 	result <- fai_query4( faifh , "1", 100 , 200 )
 	print( result )
 	fai_close( faifh )

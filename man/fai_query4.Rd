@@ -39,7 +39,7 @@ A string containing the (sub-)sequence, FALSE if it fails.
 ##
 faifile  <- system.file("extdata", "ex.fasta", package = "WhopGenome")
 faifh <- fai_open( faifile )
-stopifnot( faifh != NULL )
+stopifnot( !is.null(faifh) )
 result = fai_query4( faifh , "1", 9 , 20 )
 if( result != FALSE )
 {

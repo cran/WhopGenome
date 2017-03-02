@@ -265,10 +265,10 @@ EXPORT	SEXP	VCF_restartRegion( SEXP vcfptr );
 	//	Samples
 	//
 EXPORT	SEXP	VCF_getSampleNames( SEXP vcfptr );
-EXPORT	SEXP	VCF_selectSamples( SEXP vcfptr, SEXP samplesvec );
-EXPORT	SEXP	VCF_getSelectedSamples( SEXP vcfptr );
-EXPORT	SEXP	VCF_selectSampleByName( SEXP vcfptr, SEXP samplename );
 EXPORT  SEXP    VCF_getSampleByName( SEXP vcfptr, SEXP str_samplename );
+EXPORT	SEXP	VCF_getSelectedSamples( SEXP vcfptr );
+EXPORT	SEXP	VCF_selectSamples( SEXP vcfptr, SEXP samplesvec );
+EXPORT	SEXP	VCF_selectSampleByName( SEXP vcfptr, SEXP samplename );
 
 
 	//	Reading

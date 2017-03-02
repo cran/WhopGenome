@@ -1,7 +1,7 @@
 
 PKG_LIBS = -lz
 
-PKG_CFLAGS = 
+PKG_CFLAGS = $(C_VISIBILITY)
 
 PKG_CPPFLAGS = 
 

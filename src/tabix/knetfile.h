@@ -6,6 +6,7 @@
 
 #include <stdint.h>
 #include <fcntl.h>
+#include <inttypes.h>	// @ubw:0.9.5: to support sprintf+int64_t
 
 #ifndef _WIN32
 #define netread(fd, ptr, len) read(fd, ptr, len)

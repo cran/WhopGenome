@@ -26,7 +26,7 @@ TRUE if call succeeds, FALSE if it fails.
 ##
 faifile  <- system.file("extdata", "ex.fasta", package = "WhopGenome")
 faifh <- fai_open( faifile )
-stopifnot( faifh != NULL )
+stopifnot( !is.null(faifh) )
 fai_close( faifh )
 
 }

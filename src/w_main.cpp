@@ -30,6 +30,11 @@
 	//
 #include	<time.h>
 
+
+	//
+#include	<R_ext/Visibility.h>
+#include	<R_ext/Boolean.h>
+
 //*
 //*			DEFINES
 //*
@@ -799,8 +804,8 @@ R_CallMethodDef callMethods[]  = {
 	
 	//	FaIdx
 	//
-	{"FAI_query4" , (DL_FUNC) & FAI_query4 , 5 },		//FAI_query5( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end )
-	{"FAI_query2" , (DL_FUNC) & FAI_query2 , 3 },		//FAI_query3( SEXP faiptr, SEXP regionstr )
+	{"FAI_query4" , (DL_FUNC) & FAI_query4 , 4 },		//FAI_query5( SEXP faiptr, SEXP seqn, SEXP beg, SEXP end )
+	{"FAI_query2" , (DL_FUNC) & FAI_query2 , 2 },		//FAI_query3( SEXP faiptr, SEXP regionstr )
 	{"FAI_build" , (DL_FUNC) & FAI_build , 1 },		//FAI_build( SEXP filename )
 	{"FAI_open" , (DL_FUNC) & FAI_open , 1 },		//FAI_open( SEXP filename )
 	{"FAI_close" , (DL_FUNC) & FAI_close , 1 },		//FAI_close( SEXP faiptr )
@@ -837,7 +842,7 @@ R_CallMethodDef callMethods[]  = {
 	{"tabix_open" , (DL_FUNC) & tabix_open , 1 },		//tabix_open( SEXP filename )
 	{"tabix_close" , (DL_FUNC) & tabix_close , 1 },		//tabix_close( SEXP tabix )
 	{"tabix_reopen" , (DL_FUNC) & tabix_reopen , 1 },		//tabix_reopen( SEXP tabix )
-	{"tabix_setRegion" , (DL_FUNC) & tabix_setRegion , 3 },		//tabix_setRegion( SEXP tabix, SEXP tid, SEXP begin, SEXP endpos )
+	{"tabix_setRegion" , (DL_FUNC) & tabix_setRegion , 4 },		//tabix_setRegion( SEXP tabix, SEXP tid, SEXP begin, SEXP endpos )
 	{"tabix_getRegion" , (DL_FUNC) & tabix_getRegion , 1 },		//tabix_getRegion( SEXP tabix )
 	{"tabix_restartRegion" , (DL_FUNC) & tabix_restartRegion , 1 },		//tabix_restartRegion( SEXP tabix )
 	{"tabix_readLine" , (DL_FUNC) & tabix_readLine , 1 },		//tabix_readLine( SEXP tabix )
@@ -876,7 +881,7 @@ R_CallMethodDef callMethods[]  = {
 	
 		// ?
 	{"read_snp_anyploid_multiallelic_int_nuclcodes" , (DL_FUNC) & read_snp_anyploid_multiallelic_int_nuclcodes , 2 },		//read_snp_anyploid_multiallelic_int_nuclcodes( SEXP vcfptr, SEXP mat )
-	{"read_snp_anyploid_multiallelic_int_nuclcodes" , (DL_FUNC) & read_snp_anyploid_multiallelic_int_nuclcodes , 2 },		//read_snp_anyploid_multiallelic_int_nuclcodes( SEXP vcfptr, SEXP mat )
+	//{"read_snp_anyploid_multiallelic_int_nuclcodes" , (DL_FUNC) & read_snp_anyploid_multiallelic_int_nuclcodes , 2 },		//read_snp_anyploid_multiallelic_int_nuclcodes( SEXP vcfptr, SEXP mat )
 	{"VCF_readBialMultilineCodeMatrix" , (DL_FUNC) & VCF_readBialMultilineCodeMatrix , 2 },		//VCF_readBialMultilineCodeMatrix( SEXP vcfptr, SEXP mat )
 	
 //	{"helper_read_intmatrix_functored" , (DL_FUNC) & helper_read_intmatrix_functored , XXX },		//helper_read_intmatrix_functored( SEXP vcfptr, MatrixLoaderBaseClass &fn, SEXP mat )
@@ -906,8 +911,8 @@ R_CallMethodDef callMethods[]  = {
 	
 	//	Line readers
 	//
-	{"VCF_readLineRaw" , (DL_FUNC) & VCF_readLineRaw , 1 },					//VCF_readLineRaw( SEXP vcfptr )
-	{"VCF_readLineRawFiltered" , (DL_FUNC) & VCF_readLineRawFiltered , 1 },	//VCF_readLineRawFiltered( SEXP vcfptr )
+	{"VCF_readLineRaw" , (DL_FUNC) & VCF_readLineRaw , 2 },					//VCF_readLineRaw( SEXP vcfptr , SEXP str=NA )
+	{"VCF_readLineRawFiltered" , (DL_FUNC) & VCF_readLineRawFiltered , 2 },	//VCF_readLineRawFiltered( SEXP vcfptr, SEXP str=NA )
 	{"VCF_readLineTSV" , (DL_FUNC) & VCF_readLineTSV , 1 },					//VCF_readLineTSV( SEXP vcfptr )
 	{"VCF_readLineTSVFiltered" , (DL_FUNC) & VCF_readLineTSVFiltered , 1 },	//VCF_readLineTSVFiltered( SEXP vcfptr )
 #if 0
@@ -921,6 +926,18 @@ R_CallMethodDef callMethods[]  = {
 
 
 
+
+EXPORT void /*attribute_visible*/ R_init_WhopGenome(DllInfo *info)
+{
+	/* Register routines, allocate resources. */
+	R_registerRoutines(info, NULL, callMethods, NULL, NULL);
+	R_useDynamicSymbols(info, (Rboolean)FALSE);
+}
+
+EXPORT void /*attribute_visible*/ R_unload_WhopGenome(DllInfo *info)
+{
+	/* Release resources. */
+}
 
 
 

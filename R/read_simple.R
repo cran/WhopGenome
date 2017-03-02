@@ -22,13 +22,14 @@ vcf_readLineVecFiltered <- function( vcffh )	.Call("VCF_readLineTSVFiltered",vcf
 #
 #	reads a line and stores in 'str'
 #
+#@ubw : readLineRaw[Filtered] take two arguments (by initial design) but warn when using a (string) variable as second argument
 	#	unfiltered
 	#
-vcf_readLineRaw <- function( vcffh , res=NA )	.Call("VCF_readLineRaw",vcffh, res, PACKAGE="WhopGenome")
+vcf_readLineRaw <- function( vcffh )	.Call("VCF_readLineRaw",vcffh, NA, PACKAGE="WhopGenome")
 
 	#	filtered
 	#
-vcf_readLineRawFiltered <- function( vcffh , res=NA )	.Call("VCF_readLineRawFiltered",vcffh, res, PACKAGE="WhopGenome")
+vcf_readLineRawFiltered <- function( vcffh )	.Call("VCF_readLineRawFiltered",vcffh, NA, PACKAGE="WhopGenome")
 
 #
 #

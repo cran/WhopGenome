@@ -65,6 +65,7 @@ export(vcf_getselectedsamples)
 export(vcf_getregion)
 export(vcf_setregion)
 export(vcf_restartregion)
+export(vcf_eor)
 
 
 #

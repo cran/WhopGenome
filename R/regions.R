@@ -37,3 +37,8 @@ vcf_setregion <- function( vcffh , tid, from=NA, to=NA )
 #
 vcf_restartregion <- function( vcffh )	.Call("VCF_restartRegion",vcffh,PACKAGE="WhopGenome")
 
+#
+#	TRUE if all lines within region have been read, FALSE if there are some left
+#
+vcf_eor <- function( vcffh )	.Call("VCF_eor",vcffh,PACKAGE="WhopGenome")
+

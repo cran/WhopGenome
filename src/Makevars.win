@@ -7,7 +7,7 @@ PKG_LIBS = -lws2_32 -lz
 #
 #
 
-PKG_CFLAGS =
+PKG_CFLAGS = $(C_VISIBILITY)
 PKG_CPPFLAGS =
 
 #	WhopGenome main source code files

@@ -26,7 +26,7 @@ Returns a FAIhandle that is required for fai_query3, fai_query5, fai_close
 ##
 faifile  <- system.file("extdata", "ex.fasta", package = "WhopGenome")
 faifh <- fai_open( faifile )
-stopifnot( faifh != NULL )
+stopifnot( !is.null(faifh) )
 }
 %XXXXXXXXXXXXXXX
 \author{

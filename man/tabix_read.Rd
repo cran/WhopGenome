@@ -38,7 +38,7 @@ if( file.exists(gffgzfile) )
  gffgzfile
  gffh <- tabix_open( gffgzfile )
  gffh
- stopifnot( gffh != NULL )
+ stopifnot( !is.null(gffh) )
  tabix_read( gffh )
  tabix_close( gffh )
  gffh
