@@ -28,6 +28,7 @@
 	//
 #include <vector>
 #include <string>
+#include <strings.h>
 
 //*
 //*			DEFINES

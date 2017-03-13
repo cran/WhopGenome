@@ -1,4 +1,4 @@
-cd6b5deed4ebc9256b9f673e9fb46db4 *DESCRIPTION
+9346778237ca1f386906ec8585e2c24a *DESCRIPTION
 b26ff8695ea06355ac039fc2c1067123 *NAMESPACE
 0cf1f2721406ae874dc221ea069b17dc *R/ZZZ_whopgenome.R
 2bec69cce5e5ec056cc85349c0787a5d *R/bgzf.R
@@ -182,14 +182,14 @@ d54a71ce0dcd277bfca2965d029e4318 *src/tabix/kstring.c
 ee59537b0051846e9ac4d12f4c8927f3 *src/tabix/razf.h
 7a797578851ec2fc61850811ed6790bf *src/tabix/tabix.h
 ba5d5ae1dd2a1e9ae874a72f3da3aabe *src/w_codemat.cpp
-f3d937c496c0079a9536d3f993468ae3 *src/w_common.h
+4e54392947025fd4d190966d052f563d *src/w_common.h
 cfb15f92aebec8c978870a6ad674d9d2 *src/w_dataframe.cpp
 aa6851157aa58ec7ba9379296308f3ad *src/w_filtering.cpp
 40c3e742ad7eaf4caa168cab5468076f *src/w_main.cpp
 1ef77338da46bf8de94e68f5b708ae2c *src/w_read.cpp
 c16ce7cc56e08911b147eb7ce2951c19 *src/w_region.cpp
 9a599f493ba38fc30c13edb8aefe4be7 *src/w_rsupport.cpp
-f88ebdca893de2c6df220dca9cc23630 *src/w_rsupport.h
+025f30601edfe879c4ac5a6428149f6b *src/w_rsupport.h
 6f25c258ef7578067cf0971196156cc5 *src/w_samples.cpp
 7187ad87bdae66175a46356c5e07fe58 *src/w_snpmat_diplo.cpp
 ae9b68691c99471c6f0d8a7cdd49081a *src/w_snpmat_fnc.cpp

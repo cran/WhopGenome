@@ -44,11 +44,12 @@
 	//
 #include	<string>
 #include	<vector>
-
+#include	<strings.h>
 
 //*
 //*			DEFINES
 //*
+
 
 	// support some variations in VCF file format, e.g. GT being not first field, and "\" as genotype separator char besides "/" and "|" etc.
 //#define			RELAXED_STANDARD		1
@@ -77,6 +78,10 @@
 #define		guard				try{
 	
 #define		unguards			}catch(const char*err){Rprintf("EXCEPTION CAUGHT:'%s' in file %s line %d\n",err,__FILE__,__LINE__);}catch(...){Rprintf("UNKNOWN EXCEPTION CAUGHT in file %s line %d\n",__FILE__,__LINE__);}
+
+
+	//
+	//
 
 
 	//Nucleotide codes

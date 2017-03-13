@@ -1,8 +1,8 @@
 Package: WhopGenome
 Type: Package
 Title: High-Speed Processing of VCF, FASTA and Alignment Data
-Version: 0.9.6
-Date: 2017-02-28
+Version: 0.9.7
+Date: 2017-03-10
 Author: Ulrich Wittelsbuerger [aut, cre], Heng Li [ctb], Bob Handsaker [ctb]
 Authors@R: c(	person("Ulrich", "Wittelsbuerger", role = c("aut", "cre"),email = "ulrich.wittelsbuerger@uni-duesseldorf.de"),
 				person("Heng", "Li", role = "ctb"),
@@ -20,6 +20,6 @@ SystemRequirements: zlib headers and library
 NeedsCompilation: yes
 LazyLoad: yes
 Copyright: inst/COPYRIGHTS
-Packaged: 2017-03-02 12:39:27 UTC; uli
+Packaged: 2017-03-10 10:54:15 UTC; uli
 Repository: CRAN
-Date/Publication: 2017-03-02 14:29:47
+Date/Publication: 2017-03-13 17:10:56
