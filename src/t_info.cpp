@@ -109,7 +109,7 @@ const char*	whop_tabix::getSequenceName( unsigned long idx )
 */
 bool			whop_tabix::parseHeader( ParseFunctor &f )
 {
-	
+
 	//	validate arguments
 	//
 	if( this == 0 )
@@ -117,11 +117,11 @@ bool			whop_tabix::parseHeader( ParseFunctor &f )
 		Rprintf("whop_tabix::parseheader : NULL vcf*!\n");
 		return false;
 	}
-	if( &f == 0 ){
-		Rprintf("whop_tabix::parseheader : NULL functor!\n");
-		return false;
-	}
-	
+	// if( &f == 0 ){
+	// 	Rprintf("whop_tabix::parseheader : NULL functor!\n");
+	// 	return false;
+	// }
+
 	//
 	for( unsigned int i=0 ; i < header_lines.size() ; i++ )
 	{
@@ -132,7 +132,7 @@ bool			whop_tabix::parseHeader( ParseFunctor &f )
 			return true;
 		}
 	}
-	
+
 	//
 	//Rprintf("VCF_parseheader false[%s]\n",s);
 	return false;
